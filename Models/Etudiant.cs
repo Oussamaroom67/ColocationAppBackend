@@ -9,7 +9,6 @@
         public decimal Budget { get; set; }
         public string Bio {  get; set; }
         public List<string> Habitudes { get; set; } = [];
-
         public List<string> CentresInteret { get; set; } = [];
         public List<string> StyleDeVie { get; set; } = [];
         public List<ReseauSocial> ReseauxSociaux { get; set; }= [];
