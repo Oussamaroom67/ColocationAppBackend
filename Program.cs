@@ -1,4 +1,7 @@
 
+using ColocationAppBackend.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace ColocationAppBackend
 {
     public class Program
@@ -15,6 +18,10 @@ namespace ColocationAppBackend
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
