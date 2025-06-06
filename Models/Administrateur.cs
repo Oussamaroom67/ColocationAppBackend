@@ -1,6 +1,11 @@
 ﻿namespace ColocationAppBackend.Models
 {
-    public class Administrateur
+    public class Administrateur : Utilisateur
     {
+        protected Administrateur()
+        {
+        }
+
     }
+
 }

@@ -6,7 +6,6 @@
         public string Adresse { get; set; }
         public decimal Surface { get; set; }
         public int NbChambres { get; set; }
-        public int ProprietaireId { get; set; }
         public string Ville { get; set; }
         public string CodePostal { get; set; }
         public string Pays { get; set; }
@@ -21,6 +20,10 @@
         public bool InternetInclus { get; set; }
         public bool ChargesIncluses { get; set; }
         public bool ParkingDisponible { get; set; }
+        public int ProprietaireId { get; set; }
+        public Proprietaire Proprietaire { get; set; }
+        public Annonce Annonce { get; set; }
+
 
     }
 }

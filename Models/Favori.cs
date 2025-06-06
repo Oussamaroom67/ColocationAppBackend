@@ -5,10 +5,8 @@ namespace ColocationAppBackend.Models
     public class Favori
     {
         public int Id { get; set; }
-
-        // Relation vers l'étudiant (qui a mis en favori)
         public int EtudiantId { get; set; }
-        public Etudiant? Etudiant { get; set; }
+        public Etudiant Etudiant { get; set; }
 
         // Favori lié à une annonce
         public int? AnnonceId { get; set; }

@@ -11,5 +11,7 @@
         public DateTime DateEnvoi { get; set; } = DateTime.Now;
         public DateTime? DateLecture { get; set; } = null;
         public bool EstLu { get; set; } = false;
+        public int ConversationId { get; set; }
+        public Conversation Conversation { get; set; }
     }
 }

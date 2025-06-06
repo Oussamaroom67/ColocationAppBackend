@@ -13,19 +13,19 @@ namespace ColocationAppBackend.Models
 
         // Qui a signalé
         public int SignaleurId { get; set; }
-        public Utilisateur? Signaleur { get; set; }
+        public Utilisateur Signaleur { get; set; }
 
         // Contenu ciblé
-        public int? UtilisateurSignaleId { get; set; }
-        public Utilisateur? UtilisateurSignale { get; set; }
+        public int UtilisateurSignaleId { get; set; }
+        public Utilisateur UtilisateurSignale { get; set; }
 
-        public int? AnnonceSignaleeId { get; set; }
+        public int AnnonceSignaleeId { get; set; }
         public Annonce? AnnonceSignalee { get; set; }
         public SignalementType Statut { get; set; } = SignalementType.enAttente;
         public string? NotesAdmin { get; set; }
 
         public int? ResoluParId { get; set; }
-        public Administrateur? ResoluPar { get; set; }
+        public Utilisateur ResoluPar { get; set; }
 
         public DateTime? DateResolution { get; set; }
         public DateTime DateModification { get; set; } = DateTime.UtcNow;
