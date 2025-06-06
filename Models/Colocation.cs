@@ -11,6 +11,7 @@ namespace ColocationAppBackend.Models
         public DateTime DateDebutDisponibilite { get; set; }
         public List<string> Preferences { get; set; } 
         public int EtudiantId { get; set; }
+        public Etudiant Etudiant { get; set; }
 
     }
 }
