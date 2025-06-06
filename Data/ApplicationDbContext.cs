@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ColocationAppBackend.Models;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace ColocationAppBackend.Data
 {
@@ -93,6 +94,12 @@ namespace ColocationAppBackend.Data
                 .WithMany(c => c.Messages)
                 .HasForeignKey(m => m.ConversationId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Expediteur)
+                .WithMany() // Si tu ne veux pas de collection inverse dans Utilisateur
+                .HasForeignKey(m => m.ExpediteurId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
 
             // Relations pour Signalement
 
@@ -115,14 +122,40 @@ namespace ColocationAppBackend.Data
                 .HasOne(s => s.ResoluPar)
                 .WithMany(u => u.SignalementsTraites)
                 .HasForeignKey(s => s.ResoluParId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Relation Signalement -> AnnonceSignalee (annonce signalée), suppression fixée à null
             modelBuilder.Entity<Signalement>()
                 .HasOne(s => s.AnnonceSignalee)
                 .WithMany(a => a.Signalements)
                 .HasForeignKey(s => s.AnnonceSignaleeId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
+            // Relation un-à-plusieurs entre Etudiant et ReseauSocial, suppression en cascade
+            modelBuilder.Entity<ReseauSocial>()
+                .HasOne(r => r.Etudiant)
+                .WithMany(e => e.ReseauxSociaux)
+                .HasForeignKey(r => r.EtudiantId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        // Fabrique pour la création du DbContext en mode design-time (migrations)
+        public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+        {
+            public ApplicationDbContext CreateDbContext(string[] args)
+            {
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+
+                var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+                var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+                optionsBuilder.UseSqlServer(connectionString);
+
+                return new ApplicationDbContext(optionsBuilder.Options);
+            }
+
         }
     }
 }
