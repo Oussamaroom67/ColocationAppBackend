@@ -2,7 +2,7 @@
 {
     public class Proprietaire : Utilisateur
     {
-        protected Proprietaire() { 
+        public Proprietaire() { 
             Logements = new HashSet<Logement>();
         }
         public string Adresse { get; set; }

@@ -2,7 +2,7 @@
 {
     public class Etudiant : Utilisateur
     {
-        protected Etudiant()
+        public Etudiant()
         {
             Colocations = new HashSet<Colocation>();
             Favoris = new HashSet<Favori>();
