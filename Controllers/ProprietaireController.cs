@@ -21,6 +21,16 @@ namespace ColocationAppBackend.Controllers
         {
             try
             {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int proprietaireId))
+                {
+                    return Unauthorized(new { error = "Utilisateur non identifié" });
+                }
+
+                // Associer le propriétaire au logement
+                req.ProprietaireId = proprietaireId;
+
                 var result = await _manager.AjouterLogementEtAnnonceAsync(req);
                 return Ok(result);
             }
