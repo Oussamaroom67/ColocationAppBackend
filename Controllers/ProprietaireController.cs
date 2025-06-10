@@ -1,6 +1,8 @@
 ﻿using ColocationAppBackend.BL;
 using ColocationAppBackend.DTOs.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ColocationAppBackend.Controllers
 {
@@ -25,6 +27,28 @@ namespace ColocationAppBackend.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Proprietaire")]
+        [HttpGet("annonces")]
+        public async Task<IActionResult> GetAnnonces()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int proprietaireId))
+                {
+                    return Unauthorized(new { error = "Utilisateur non identifié" });
+                }
+
+                var annonces = await _manager.GetAnnoncesByProprietaireIdAsync(proprietaireId);
+                return Ok(annonces);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
             }
         }
     }

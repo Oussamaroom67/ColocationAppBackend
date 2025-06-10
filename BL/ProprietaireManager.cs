@@ -105,5 +105,24 @@ namespace ColocationAppBackend.BL
                 }).ToList()
             };
         }
+        public async Task<IEnumerable<AnnonceSummaryDto>> GetAnnoncesByProprietaireIdAsync(int proprietaireId)
+        {
+            return await _context.Annonces
+            .Include(a => a.Logement)
+            .Include(a => a.Photos)
+            .Where(a => a.Logement.ProprietaireId == proprietaireId)
+            .Select(a => new AnnonceSummaryDto
+            {
+                Id = a.Id,
+                Title = a.Titre,
+                Location = $"{a.Logement.Ville}",
+                PublishDate = "Publié le " + a.DateModification.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR")),
+                Price = $"{a.Prix} MAD/mois",
+                Views = a.NbVues,
+                Status = a.Statut.ToString().ToLower(),
+                ImageUrl = a.Photos.Select(p => p.Url).FirstOrDefault() ?? "https://your-default-image.jpg"
+            })
+            .ToListAsync();
+        }
     }
 }
