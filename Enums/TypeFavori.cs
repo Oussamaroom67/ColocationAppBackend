@@ -2,7 +2,7 @@
 {
     public enum TypeFavori
     {
-        propriete,
-        colocation
+        Propriete,
+        Colocation
     }
 }

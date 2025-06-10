@@ -1,10 +1,12 @@
 
 using ColocationAppBackend.BL;
 using ColocationAppBackend.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ColocationAppBackend
 {
@@ -25,6 +27,13 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<ProprietaireManager>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<AnnonceFilterService>();
+            builder.Services.AddScoped<FavoriService>();
+            builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
