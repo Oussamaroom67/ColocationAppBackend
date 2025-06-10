@@ -22,7 +22,7 @@ namespace ColocationAppBackend.BL
                 query = query.Where(a => a.Logement.Type == filter.PropertyType);
 
             if (filter.MinPrice.HasValue)
-                query = query.Where(a => a.Prix >= filter.MinPrice.Value);
+                query = query.Where(a => a.Prix <= filter.MinPrice.Value);
 
             return query.ToList();
         }

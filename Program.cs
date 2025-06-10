@@ -24,6 +24,7 @@ namespace ColocationAppBackend
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<ProprietaireManager>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<AnnonceFilterService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
