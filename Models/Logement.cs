@@ -50,6 +50,8 @@ namespace ColocationAppBackend.Models
         public bool ChargesIncluses { get; set; }
 
         public bool ParkingDisponible { get; set; }
+        //type de logement
+        public string? Type { get; set; }
 
         [ForeignKey("Proprietaire")]
         [Required(ErrorMessage = "L'identifiant du propriétaire est obligatoire.")]

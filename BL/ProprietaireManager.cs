@@ -83,7 +83,8 @@ namespace ColocationAppBackend.BL
                     ChargesIncluses = req.Amenities?.Contains("charges") ?? false,
                     ParkingDisponible = req.Amenities?.Contains("parking") ?? false,
                     ProprietaireId = req.ProprietaireId,
-                    Annonce = annonce
+                    Annonce = annonce,
+                    Type = req.Type,
                 };
 
                 _context.Logements.Add(logement);
@@ -123,6 +124,40 @@ namespace ColocationAppBackend.BL
                 ImageUrl = a.Photos.Select(p => p.Url).FirstOrDefault() ?? "https://wiratthungsong.com/wts/assets/img/default.png"
             })
             .ToListAsync();
+        }
+
+        public async Task<bool> SupprimerLogementAsync(int logementId, int proprietaireId)
+        {
+            // Vérifie que le logement existe et appartient au propriétaire
+            var logement = await _context.Logements
+                .FirstOrDefaultAsync(l => l.Id == logementId && l.ProprietaireId == proprietaireId);
+
+            if (logement == null)
+                throw new Exception("Logement introuvable ou vous n'avez pas les droits pour le supprimer");
+
+            // Supprime le logement (les cascades s'occupent du reste)
+            _context.Logements.Remove(logement);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> ChangerStatutAnnonceAsync(int annonceId, AnnonceStatus nouveauStatut, int proprietaireId)
+        {
+            // Vérifie que l'annonce existe et appartient au propriétaire
+            var annonce = await _context.Annonces
+                .Include(a => a.Logement)
+                .FirstOrDefaultAsync(a => a.Id == annonceId && a.Logement.ProprietaireId == proprietaireId);
+
+            if (annonce == null)
+                throw new Exception("Annonce introuvable ou vous n'avez pas les droits pour la modifier");
+
+            // Change le statut
+            annonce.Statut = nouveauStatut;
+            annonce.DateModification = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
