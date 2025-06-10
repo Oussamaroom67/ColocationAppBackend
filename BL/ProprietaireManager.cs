@@ -120,7 +120,7 @@ namespace ColocationAppBackend.BL
                 Price = $"{a.Prix} MAD/mois",
                 Views = a.NbVues,
                 Status = a.Statut.ToString().ToLower(),
-                ImageUrl = a.Photos.Select(p => p.Url).FirstOrDefault() ?? "https://your-default-image.jpg"
+                ImageUrl = a.Photos.Select(p => p.Url).FirstOrDefault() ?? "https://wiratthungsong.com/wts/assets/img/default.png"
             })
             .ToListAsync();
         }
