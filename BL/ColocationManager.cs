@@ -3,6 +3,7 @@ using ColocationAppBackend.DTOs.Requests;
 using ColocationAppBackend.DTOs.Responses;
 using ColocationAppBackend.Enums;
 using ColocationAppBackend.Models;
+using ColocationAppBackend.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace ColocationAppBackend.BL
@@ -100,5 +101,104 @@ namespace ColocationAppBackend.BL
                 ProprietaireColocation = $"{colocation.Etudiant.Prenom} {colocation.Etudiant.Nom}"
             };
         }
+
+        public async Task<List<MesDemandesColocationResponse>> ObtenirMesDemandesAsync(int etudiantId)
+        {
+            var demandes = await _context.DemandesColocation
+                .Include(d => d.Colocation)
+                .ThenInclude(c => c.Etudiant)
+                .Where(d => d.EtudiantId == etudiantId)
+                .OrderByDescending(d => d.Id)
+                .ToListAsync();
+
+            return demandes.Select(d => new MesDemandesColocationResponse
+            {
+                Id = d.Id,
+                Nom = $"{d.Colocation.Etudiant.Prenom} {d.Colocation.Etudiant.Nom}",
+                Ecole = d.Colocation.Etudiant.Universite,
+                Message = d.Message,
+                Date = d.DateEmmenagement.ToString("yyyy-MM-dd"),
+                Statut = EnumHelper.GetStatutFrancais(d.Statut), 
+                Budget = d.Budget?.ToString("0") + " MAD/mois",
+                Quartier = d.Adresse,
+                Preferences = d.Preferences,
+                Reponse = d.ReponseProprietaire,
+                ColocationId = d.ColocationId,
+                ColocationAdresse = d.Colocation.Adresse,
+                ColocationBudget = d.Colocation.Budget.ToString("0") + " MAD/mois",
+                ColocationPreferences = d.Colocation.Preferences
+            }).ToList();
+        }
+
+        //  méthode pour répondre à une demande (pour le propriétaire)
+        public async Task<bool> RepondreDemandeAsync(RepondreDemandeRequest request, int proprietaireId)
+        {
+            var demande = await _context.DemandesColocation
+                .Include(d => d.Colocation)
+                .FirstOrDefaultAsync(d => d.Id == request.DemandeId);
+
+            if (demande == null)
+                throw new Exception("Demande introuvable");
+
+            // Vérifier que c'est bien le propriétaire de la colocation qui répond
+            if (demande.Colocation.EtudiantId != proprietaireId)
+                throw new Exception("Vous n'êtes pas autorisé à répondre à cette demande");
+
+            // Vérifier que la demande est encore en attente
+            if (demande.Statut != StatutDemande.EnAttente)
+                throw new Exception("Cette demande a déjà été traitée");
+
+            // Mettre à jour la demande
+            demande.Statut = request.NouveauStatut;
+            demande.ReponseProprietaire = request.ReponseMessage;
+            demande.DateReponse = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        // 5. Méthode pour annuler une demande (pour l'étudiant)
+        public async Task<bool> AnnulerDemandeAsync(int demandeId, int etudiantId)
+        {
+            var demande = await _context.DemandesColocation
+                .FirstOrDefaultAsync(d => d.Id == demandeId && d.EtudiantId == etudiantId);
+
+            if (demande == null)
+                throw new Exception("Demande introuvable ou vous n'êtes pas autorisé à l'annuler");
+
+            // Vérifier que la demande peut être annulée (seulement si elle est en attente)
+            if (demande.Statut != StatutDemande.EnAttente)
+                throw new Exception("Vous ne pouvez annuler que les demandes en attente");
+
+            _context.DemandesColocation.Remove(demande);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        // 6. Méthode pour obtenir les demandes reçues (pour le propriétaire)
+        public async Task<List<DemandesRecuesResponse>> ObtenirDemandesRecuesAsync(int proprietaireId)
+        {
+            var demandes = await _context.DemandesColocation
+                .Include(d => d.Etudiant)
+                .Include(d => d.Colocation)
+                .Where(d => d.Colocation.EtudiantId == proprietaireId)
+                .OrderByDescending(d => d.Id)
+                .ToListAsync();
+
+            return demandes.Select(d => new DemandesRecuesResponse
+            {
+                DemandeId = d.Id,
+                NomEtudiant = $"{d.Etudiant.Prenom} {d.Etudiant.Nom}",
+                EcoleEtudiant = d.Etudiant.Universite,
+                Message = d.Message,
+                Budget = d.Budget?.ToString("0") + " MAD/mois",
+                DateEmmenagement = d.DateEmmenagement.ToString("yyyy-MM-dd"),
+                Preferences = d.Preferences,
+                Statut = EnumHelper.GetStatutFrancais(d.Statut),
+                ColocationAdresse = d.Colocation.Adresse,
+                ReponseEnvoyee = d.ReponseProprietaire,
+                DateReponse = d.DateReponse?.ToString("yyyy-MM-dd")
+            }).ToList();
+        }
+
     }
 }
