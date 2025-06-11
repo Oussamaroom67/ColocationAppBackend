@@ -4,6 +4,9 @@ namespace ColocationAppBackend.DTOs.Requests
 {
     public class LogementAnnonceRequest
     {
+        //ajouter l'ID de l'annonce pour les mises à jour
+        public int? LogementId { get; set; }
+
         [Required(ErrorMessage = "L'identifiant du propriétaire est requis.")]
         public int ProprietaireId { get; set; }
         [Required(ErrorMessage = "Le titre est requis.")]

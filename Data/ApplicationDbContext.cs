@@ -80,7 +80,12 @@ namespace ColocationAppBackend.Data
                 .WithMany(e => e.DemandesColocations)
                 .HasForeignKey(d => d.EtudiantId)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            // Relation un-à-plusieurs entre Colocation et DemandesColocation
+            modelBuilder.Entity<DemandeColocation>()
+                .HasOne(d => d.Colocation)
+                .WithMany(c => c.DemandesColocation)
+                .HasForeignKey(d => d.ColocationId)
+                .OnDelete(DeleteBehavior.NoAction);
             // Relation un-à-plusieurs entre Etudiant et Favoris, suppression en cascade
             modelBuilder.Entity<Favori>()
                 .HasOne(f => f.Etudiant)
