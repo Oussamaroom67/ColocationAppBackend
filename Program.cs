@@ -28,12 +28,16 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<AnnonceFilterService>();
             builder.Services.AddScoped<FavoriService>();
+            builder.Services.AddScoped<AnnonceService>();
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             });
+            builder.Services.AddControllers()
+            .AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
