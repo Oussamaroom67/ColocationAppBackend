@@ -38,6 +38,8 @@ namespace ColocationAppBackend
             builder.Services.AddControllers()
             .AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
+            builder.Services.AddScoped<ColocationManager>();
+
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

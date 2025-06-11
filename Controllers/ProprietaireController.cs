@@ -16,7 +16,7 @@ namespace ColocationAppBackend.Controllers
             _manager = manager;
         }
 
-        [HttpPost("create")]
+        [HttpPost("save")]
         public async Task<IActionResult> Create([FromBody] LogementAnnonceRequest req)
         {
             try

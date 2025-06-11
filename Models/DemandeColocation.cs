@@ -11,7 +11,12 @@ namespace ColocationAppBackend.Models
         public DateTime DateEmmenagement { get; set; }
         public List<string> Preferences { get; set; }
         public StatutDemande Statut { get; set; } = StatutDemande.EnAttente;
+        //  Réponse du propriétaire de colocation (aussi etudiant )
+        public string? ReponseProprietaire { get; set; }
+        public DateTime? DateReponse { get; set; }
         public int EtudiantId { get; set; }
         public Etudiant Etudiant { get; set; }
+        public int ColocationId { get; set; }
+        public Colocation Colocation { get; set; }
     }
 }
