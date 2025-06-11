@@ -37,5 +37,27 @@ namespace ColocationAppBackend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+
+        [Authorize(Roles = "Etudiant")]
+        [HttpPost("postuler")]
+        public async Task<IActionResult> PostulerColocation([FromBody] PostulerColocationRequest request)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int etudiantId))
+                {
+                    return Unauthorized(new { error = "Utilisateur non identifié" });
+                }
+
+                var result = await _manager.PostulerColocationAsync(request, etudiantId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }

@@ -13,5 +13,7 @@ namespace ColocationAppBackend.Models
         public StatutDemande Statut { get; set; } = StatutDemande.EnAttente;
         public int EtudiantId { get; set; }
         public Etudiant Etudiant { get; set; }
+        public int ColocationId { get; set; }
+        public Colocation Colocation { get; set; }
     }
 }

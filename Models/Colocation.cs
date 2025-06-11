@@ -13,5 +13,6 @@ namespace ColocationAppBackend.Models
         public int EtudiantId { get; set; }
         public Etudiant Etudiant { get; set; }
 
+        public List<DemandeColocation> DemandesColocation { get; set; } = new List<DemandeColocation>();
     }
 }
