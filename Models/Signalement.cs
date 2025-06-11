@@ -21,7 +21,7 @@ namespace ColocationAppBackend.Models
 
         public int AnnonceSignaleeId { get; set; }
         public Annonce? AnnonceSignalee { get; set; }
-        public SignalementType Statut { get; set; } = SignalementType.enAttente;
+        public SignalementType Statut { get; set; } = SignalementType.EnAttente;
         public string? NotesAdmin { get; set; }
 
         public int? ResoluParId { get; set; }

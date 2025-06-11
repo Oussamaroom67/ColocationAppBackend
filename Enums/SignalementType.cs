@@ -2,8 +2,8 @@
 {
     public enum SignalementType
     {
-        enAttente,
-        resolu,
-        rejete
+        EnAttente,
+        Resolu,
+        Rejete
     }
 }
