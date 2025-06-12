@@ -18,5 +18,6 @@ namespace ColocationAppBackend.Models
         public Etudiant Etudiant { get; set; }
         public int ColocationId { get; set; }
         public Colocation Colocation { get; set; }
+        public DateTime DateCreation { get; set; } = DateTime.UtcNow;
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250609233606_AddErrorsMessagesToAnnonceAndLogement")]
-    partial class AddErrorsMessagesToAnnonceAndLogement
+    [Migration("20250611233111_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -165,7 +165,16 @@ namespace ColocationAppBackend.Migrations
                     b.Property<decimal?>("Budget")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("ColocationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreation")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateEmmenagement")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateReponse")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("EtudiantId")
@@ -179,10 +188,15 @@ namespace ColocationAppBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ReponseProprietaire")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Statut")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ColocationId");
 
                     b.HasIndex("EtudiantId");
 
@@ -284,6 +298,9 @@ namespace ColocationAppBackend.Migrations
 
                     b.Property<decimal>("Surface")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ville")
                         .IsRequired()
@@ -404,6 +421,7 @@ namespace ColocationAppBackend.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Motif")
@@ -624,11 +642,19 @@ namespace ColocationAppBackend.Migrations
 
             modelBuilder.Entity("ColocationAppBackend.Models.DemandeColocation", b =>
                 {
+                    b.HasOne("ColocationAppBackend.Models.Colocation", "Colocation")
+                        .WithMany("DemandesColocation")
+                        .HasForeignKey("ColocationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("ColocationAppBackend.Models.Etudiant", "Etudiant")
                         .WithMany("DemandesColocations")
                         .HasForeignKey("EtudiantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Colocation");
 
                     b.Navigation("Etudiant");
                 });
@@ -747,6 +773,11 @@ namespace ColocationAppBackend.Migrations
                     b.Navigation("Photos");
 
                     b.Navigation("Signalements");
+                });
+
+            modelBuilder.Entity("ColocationAppBackend.Models.Colocation", b =>
+                {
+                    b.Navigation("DemandesColocation");
                 });
 
             modelBuilder.Entity("ColocationAppBackend.Models.Conversation", b =>

@@ -7,7 +7,7 @@ namespace ColocationAppBackend.Models
         public int Id { get; set; }
 
         public string Motif { get; set; } = string.Empty;
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         public DateTime DateSignalement { get; set; } = DateTime.UtcNow;
 

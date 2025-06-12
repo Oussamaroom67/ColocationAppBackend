@@ -165,6 +165,9 @@ namespace ColocationAppBackend.Migrations
                     b.Property<int>("ColocationId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("DateCreation")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateEmmenagement")
                         .HasColumnType("datetime2");
 
@@ -415,6 +418,7 @@ namespace ColocationAppBackend.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Motif")
