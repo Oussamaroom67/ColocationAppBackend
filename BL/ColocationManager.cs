@@ -200,5 +200,45 @@ namespace ColocationAppBackend.BL
             }).ToList();
         }
 
+        // 7. Méthode pour filtrer les colocations
+        public async Task<List<ColocationFiltreeResponse>> FiltrerColocationsAsync(FiltrerColocationsRequest request, int etudiantId)
+        {
+            // Récupérer toutes les colocations sauf celles de l'étudiant connecté
+            var query = _context.Colocations
+                .Include(c => c.Etudiant)
+                .Where(c => c.EtudiantId != etudiantId); // Exclure ses propres colocations
+
+            // Filtrer par budget maximum si spécifié
+            if (request.BudgetMax.HasValue)
+            {
+                query = query.Where(c => c.Budget <= (double)request.BudgetMax.Value);
+            }
+
+        
+            var colocations = await query.ToListAsync();
+
+            // Filtrer par préférences si spécifiées
+            if (request.Preferences != null && request.Preferences.Any())
+            {
+                colocations = colocations.Where(c =>
+                    request.Preferences.Any(pref =>
+                        c.Preferences.Any(cpref => cpref.ToLower().Contains(pref.ToLower()))
+                    )
+                ).ToList();
+            }
+
+            // Mapper vers le DTO de réponse
+            return colocations.Select(c => new ColocationFiltreeResponse
+            {
+                Id = c.Id,
+                Name = $"{c.Etudiant.Prenom} {c.Etudiant.Nom}",
+                School = c.Etudiant.Universite,
+                Budget = (decimal)c.Budget,
+                MoveInDate = c.DateDebutDisponibilite.ToString("dd/MM/yyyy"),
+                PreferredZone = c.Adresse,
+                Type = "Offre", // Comme spécifié dans votre exemple
+                Preferences = c.Preferences
+            }).ToList();
+        }
     }
 }

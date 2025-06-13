@@ -147,5 +147,27 @@ namespace ColocationAppBackend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        // 7. obtenir des colocations filtrees
+        [Authorize(Roles = "Etudiant")]
+        [HttpPost("filtrer")]
+        public async Task<IActionResult> FiltrerColocations([FromBody] FiltrerColocationsRequest request)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int etudiantId))
+                {
+                    return Unauthorized(new { error = "Utilisateur non identifié" });
+                }
+
+                var result = await _manager.FiltrerColocationsAsync(request, etudiantId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }
