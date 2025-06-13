@@ -65,5 +65,7 @@ namespace ColocationAppBackend.Models
 
         // Relation avec les Signalements
         public virtual ICollection<Signalement> Signalements { get; set; }
+        public ICollection<DemandeLocation> DemandesLocation { get; set; }
+
     }
 }

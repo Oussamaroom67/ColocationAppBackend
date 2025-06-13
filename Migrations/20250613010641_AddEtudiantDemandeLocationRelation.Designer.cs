@@ -4,6 +4,7 @@ using ColocationAppBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613010641_AddEtudiantDemandeLocationRelation")]
+    partial class AddEtudiantDemandeLocationRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,8 +244,6 @@ namespace ColocationAppBackend.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AnnonceId");
 
                     b.HasIndex("EtudiantId");
 
@@ -707,19 +708,11 @@ namespace ColocationAppBackend.Migrations
 
             modelBuilder.Entity("ColocationAppBackend.Models.DemandeLocation", b =>
                 {
-                    b.HasOne("ColocationAppBackend.Models.Annonce", "Annonce")
-                        .WithMany("DemandesLocation")
-                        .HasForeignKey("AnnonceId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("ColocationAppBackend.Models.Etudiant", "Etudiant")
                         .WithMany("DemandesLocation")
                         .HasForeignKey("EtudiantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Annonce");
 
                     b.Navigation("Etudiant");
                 });
@@ -835,8 +828,6 @@ namespace ColocationAppBackend.Migrations
 
             modelBuilder.Entity("ColocationAppBackend.Models.Annonce", b =>
                 {
-                    b.Navigation("DemandesLocation");
-
                     b.Navigation("Photos");
 
                     b.Navigation("Signalements");

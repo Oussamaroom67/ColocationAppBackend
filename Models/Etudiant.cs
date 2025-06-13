@@ -22,6 +22,8 @@
         public ICollection<Favori> Favoris { get; set; }
         public ICollection<DemandeColocation> DemandesColocations {  get; set; }
         public ICollection<ReseauSocial> ReseauxSociaux { get; set; }
+        public ICollection<DemandeLocation> DemandesLocation { get; set; }
+
 
     }
 }

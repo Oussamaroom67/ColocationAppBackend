@@ -26,6 +26,7 @@ namespace ColocationAppBackend.Data
         public DbSet<Signalement> Signalments { get; set; }
         public DbSet<ReseauSocial> ReseauxSociaux { get; set; }
         public DbSet<Favori> Favoris { get; set; }
+        public DbSet<DemandeLocation> DemandesLocation { get; set; }
 
         // Configuration des modèles et des relations entre entités
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -141,6 +142,20 @@ namespace ColocationAppBackend.Data
                 .WithMany(e => e.ReseauxSociaux)
                 .HasForeignKey(r => r.EtudiantId)
                 .OnDelete(DeleteBehavior.Cascade);
+            //Relation demande Location et Etudiant
+            modelBuilder.Entity<DemandeLocation>()
+            .HasOne(d => d.Etudiant)
+            .WithMany(e => e.DemandesLocation)
+            .HasForeignKey(d => d.EtudiantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Relation entre Demande Location et Annonce
+            modelBuilder.Entity<DemandeLocation>()
+            .HasOne(d => d.Annonce)
+            .WithMany(a => a.DemandesLocation)
+            .HasForeignKey(d => d.AnnonceId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         }
 
         // Fabrique pour la création du DbContext en mode design-time (migrations)
