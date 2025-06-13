@@ -33,6 +33,9 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<AnalytiquesService>();
             builder.Services.AddScoped<UtilisateurService>();
             builder.Services.AddScoped<LogementService>();
+            //recommendation des colocations 
+            builder.Services.AddScoped<RecommendationManager>();
+
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
