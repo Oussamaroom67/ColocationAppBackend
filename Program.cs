@@ -30,6 +30,7 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<FavoriService>();
             builder.Services.AddScoped<AnnonceService>();
             builder.Services.AddScoped<DashboardService>();
+            builder.Services.AddScoped<AnalytiquesService>();
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
