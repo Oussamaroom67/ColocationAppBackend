@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ColocationAppBackend.BL;
+using ColocationAppBackend.Enums;
 
 public class AuthService : IAuthService
 {
@@ -37,7 +39,7 @@ public class AuthService : IAuthService
             Adresse = dto.Adresse,
             Budget = dto.Budget,
             DateInscription = DateTime.UtcNow,
-            EstActif = true,
+            Status=UtilisateurStatus.Actif,
             EstVerifie = false,
             DernierConnexion = DateTime.UtcNow,
             DateModification = DateTime.UtcNow
@@ -65,7 +67,7 @@ public class AuthService : IAuthService
             CodePostal = dto.CodePostal,
             Pays = dto.Pays,
             DateInscription = DateTime.UtcNow,
-            EstActif = true,
+            Status = UtilisateurStatus.Actif,
             EstVerifie = false,
             DernierConnexion = DateTime.UtcNow,
             DateModification = DateTime.UtcNow

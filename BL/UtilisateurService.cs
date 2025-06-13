@@ -25,7 +25,7 @@ namespace ColocationAppBackend.BL
                 TypeUtilisateur = u is Etudiant ? "Étudiant" :
                   u is Proprietaire ? "Propriétaire" :
                   u is Administrateur ? "Administrateur" : "Inconnu",
-                Statut = u.EstActif ? "Actif" : "Inactif",
+                Statut = u.Status.ToString(),
                 Verifie = u.EstVerifie ? "Vérifié" : "Non vérifié",
                 DateInscription = u.DateInscription,
                 NbrUtilisateur = utilisateurs.Count(),
