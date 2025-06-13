@@ -12,6 +12,7 @@ namespace ColocationAppBackend.BL
         {
             _context = context;
         }
+        //Get all Logements
         public async Task<List<LogementDto>> GetAllLogementsAsync()
         {
             return await _context.Logements
@@ -27,6 +28,24 @@ namespace ColocationAppBackend.BL
                 Statut = l.Annonce.StatutVerification.ToString(),
                 DateAjout = l.Annonce.DateModification
             }).ToListAsync();
+        }
+        //Delete Propriete
+        public async Task<bool> DeleteProperiete(int id)
+        {
+            try
+            {
+                var propriete = await _context.Logements.FirstOrDefaultAsync(r => r.Id == id);
+                if (propriete == null)
+                    return false;
+                _context.Logements.Remove(propriete);
+                _context.SaveChanges();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+
         }
     }
 }

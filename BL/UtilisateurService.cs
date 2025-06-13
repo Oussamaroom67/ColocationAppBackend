@@ -36,6 +36,22 @@ namespace ColocationAppBackend.BL
 
             return result;
         }
-         
+        //delete User
+        public async Task<bool> DeleteUser(int id)
+        {
+            try
+            {
+                var user = await _context.Utilisateurs.FirstOrDefaultAsync(r => r.Id == id);
+                if (user == null)
+                    return false;
+                _context.Utilisateurs.Remove(user);
+                _context.SaveChanges();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }   
     }
 }

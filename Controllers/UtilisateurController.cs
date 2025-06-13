@@ -11,6 +11,7 @@ namespace ColocationAppBackend.Controllers
     {
         private readonly UtilisateurService _utilisateurService;
 
+
         public UtilisateurController(UtilisateurService utilisateurService)
         {
             _utilisateurService = utilisateurService;
@@ -21,6 +22,13 @@ namespace ColocationAppBackend.Controllers
         {
             var utilisateurs = await _utilisateurService.GetAllUtilisateursAsync();
             return Ok(utilisateurs);
+        }
+        [HttpPost]
+        [Route("DeleteUser")]
+        public async Task<IActionResult> DeleteUser([FromQuery] int idUser)
+        {
+            var IsDeleted = await _utilisateurService.DeleteUser(idUser);
+            return Ok(IsDeleted);
         }
     }
 }

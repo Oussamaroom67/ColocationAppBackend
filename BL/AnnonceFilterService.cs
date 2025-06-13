@@ -60,5 +60,6 @@ namespace ColocationAppBackend.BL
             }
             return query.ToList();
         }
+        //Get All Annonces
     }
 }

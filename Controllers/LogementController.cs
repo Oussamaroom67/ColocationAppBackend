@@ -20,5 +20,13 @@ namespace ColocationAppBackend.Controllers
             var utilisateurs = await _logementService.GetAllLogementsAsync();
             return Ok(utilisateurs);
         }
+        [Route("DeleteProperiete")]
+        [HttpPost]
+        public async Task<IActionResult> DeletePropriete([FromQuery] int PropId)
+        {
+            var idDeleted = await _logementService.DeleteProperiete(PropId);
+            return Ok(idDeleted);
+        }
     }
+
 }
