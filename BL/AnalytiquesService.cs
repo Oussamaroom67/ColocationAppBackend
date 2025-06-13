@@ -22,6 +22,8 @@ namespace ColocationAppBackend.BL
             var reservations = await _context.DemandesLocation.ToListAsync();
             var utilisateurs = await _context.Utilisateurs.ToListAsync();
             var annonces = await _context.Annonces.ToListAsync();
+            var etudiants = await _context.Etudiants.ToListAsync();
+            var demandesColocation = await _context.DemandesColocation.ToListAsync();
 
             // Calcul du taux d'occupation global
             var totalLogements = logements.Count;
@@ -78,6 +80,66 @@ namespace ColocationAppBackend.BL
                     TauxOccupation = g.Count() == 0 ? 0 : (double)g.Count(l => l.Statut== AnnonceStatus.Louee) / g.Count() * 100
                 }).Take(5).ToList();
 
+            //Verfications des logements
+            var verifies = annonces.Count(r => r.StatutVerification == VerificationLogementStatut.Verifie);
+            var enAttente = annonces.Count(r => r.StatutVerification == VerificationLogementStatut.EnAttente);
+            var rejetés = annonces.Count(r => r.StatutVerification == VerificationLogementStatut.Rejetée);
+
+            var TauxVerification = annonces.Count() == 0 ? 0 : verifies / annonces.Count() * 100;
+
+            //repartition signalement selon les motif 
+            var repartitionSignalements = _context.Signalments
+            .GroupBy(s => s.Motif) 
+            .Select(g => new SignalementMotifDto
+            {
+                Motif = g.Key.ToString(),
+                Nombre = g.Count()
+            }).ToList();
+            //repartition etudiants selon les Etablissements
+            var repartitionParEtablissement = etudiants.GroupBy(l => l.Universite).Select(g => new EtablissementStudentsDto
+            {
+                Etablissement = g.Key,
+                NombreEtudiants = g.Count()
+            }).ToList();
+
+            //partie Recherche Colocataire
+            var demandesActives = demandesColocation.Count();
+            var matchReussis = demandesColocation.Count(r => r.Statut == StatutDemande.Acceptee);
+            var TauxReussite = demandesColocation.Count() == 0 ? 0 : matchReussis / demandesColocation.Count() *100;
+
+            //Repartition etudiants par budgets 
+
+            var repartitionBudget = new List<BudgetEtudiantDto>
+            {
+                new BudgetEtudiantDto
+                {
+                    Tranche = "< 400€",
+                    NombreEtudiants = etudiants.Count(e => e.Budget < 400),
+                },
+                new BudgetEtudiantDto
+                {
+                    Tranche = "400€ - 600€",
+                    NombreEtudiants = etudiants.Count(e => e.Budget >= 400 && e.Budget <= 600),
+                },
+                new BudgetEtudiantDto
+                {
+                    Tranche = "600€ - 800€",
+                    NombreEtudiants = etudiants.Count(e => e.Budget > 600 && e.Budget <= 800),
+                },
+                new BudgetEtudiantDto
+                {
+                    Tranche = "> 800€",
+                    NombreEtudiants = etudiants.Count(e => e.Budget > 800),
+                }
+            };
+
+            // Calcul du pourcentage
+            foreach (var item in repartitionBudget)
+            {
+                item.Pourcentage = totalEtudiants == 0 ? 0 : (double)item.NombreEtudiants / totalEtudiants * 100;
+            }
+
+
             // Retour de l'objet contenant toutes les statistiques
             return new AnalyticsDTO
             {
@@ -90,7 +152,17 @@ namespace ColocationAppBackend.BL
                 PrixLoyerMoyen = (double)prixLoyerMoyen,
                 EvolutionReservations = reservationsMois,
                 RepartitionParType = repartitionParType,
-                RepartitionParVille = repartitionParVille
+                RepartitionParVille = repartitionParVille,
+                LogementVerifies = verifies,
+                LogementAttentes = enAttente,
+                Rejetes = rejetés,
+                TauxVerification = TauxVerification,
+                RepartitionSignalementsParMotif = repartitionSignalements,
+                RepartitionEtudiantsParEtablissements = repartitionParEtablissement,
+                DemandeActives = demandesActives,
+                MatchReussis = matchReussis,
+                TauxDeReussite = TauxReussite,
+                RepartitionBudgetEtudiants = repartitionBudget
             };
         }
     }

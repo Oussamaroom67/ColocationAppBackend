@@ -52,6 +52,7 @@ namespace ColocationAppBackend.Models
         public int NbVues { get; set; } = 0;
 
         public DateTime DateModification { get; set; } = DateTime.Now;
+        public VerificationLogementStatut StatutVerification = VerificationLogementStatut.EnAttente;
 
         // Relation avec Logement
         [ForeignKey("Logement")]
