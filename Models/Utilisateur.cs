@@ -2,7 +2,7 @@
 {
     public abstract class Utilisateur
     {
-        protected Utilisateur() {
+        public Utilisateur() {
             ConversationsParticipant1 = new HashSet<Conversation>();
             ConversationsParticipant2 = new HashSet<Conversation>();
             SignalementsEnvoyes = new HashSet<Signalement>();
