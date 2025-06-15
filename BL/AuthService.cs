@@ -94,7 +94,7 @@ public class AuthService : IAuthService
             throw new Exception("Email ou mot de passe incorrect.");
 
         if (IsUserSuspended(user))
-            throw new Exception("Votre compte est suspendu pendant 7 jours.");
+            throw new Exception("Votre compte est suspendu pendant 7 jours");
 
         user.DernierConnexion = DateTime.UtcNow;
         await _context.SaveChangesAsync();
