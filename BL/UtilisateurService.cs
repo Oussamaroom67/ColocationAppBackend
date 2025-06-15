@@ -1,6 +1,7 @@
 ﻿using ColocationAppBackend.Data;
 using ColocationAppBackend.DTOs.Requests;
 using ColocationAppBackend.DTOs.Responses;
+using ColocationAppBackend.Enums;
 using ColocationAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,18 +26,18 @@ namespace ColocationAppBackend.BL
                 TypeUtilisateur = u is Etudiant ? "Étudiant" :
                   u is Proprietaire ? "Propriétaire" :
                   u is Administrateur ? "Administrateur" : "Inconnu",
-                Statut = u.Status.ToString(),
+                Statut = IsUserSuspended(u) ? "Suspendu" : "Actif",
                 Verifie = u.EstVerifie ? "Vérifié" : "Non vérifié",
                 DateInscription = u.DateInscription,
                 NbrUtilisateur = utilisateurs.Count(),
                 NbrProprietaire = utilisateurs.Count(r => r is Proprietaire),
                 NbrEtudiants = utilisateurs.Count(r => r is Etudiant),
-                NbrAdministrateurs = utilisateurs.Count(r => r is Administrateur)
+                NbrAdministrateurs = utilisateurs.Count(r => r is Administrateur),
             }).ToList();
 
             return result;
         }
-        //delete User
+        //bannir User
         public async Task<bool> DeleteUser(int id)
         {
             try
@@ -52,6 +53,33 @@ namespace ColocationAppBackend.BL
             {
                 return false;
             }
-        }   
+        }
+        //suspendre user
+        public async Task<bool> SuspendreUser(int id, bool suspendre)
+        {
+            var user = await _context.Utilisateurs.FirstOrDefaultAsync(r => r.Id == id);
+            if (user == null) return false;
+
+            if (suspendre)
+            {
+                user.LastSuspendedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                user.LastSuspendedAt = null;
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public bool IsUserSuspended(Utilisateur user)
+        {
+            if (user.LastSuspendedAt == null)
+                return false;
+
+            return user.LastSuspendedAt.Value.AddDays(7) > DateTime.UtcNow;
+        }
+
+
     }
 }

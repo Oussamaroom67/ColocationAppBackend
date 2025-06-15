@@ -30,5 +30,15 @@ namespace ColocationAppBackend.Controllers
             var IsDeleted = await _utilisateurService.DeleteUser(idUser);
             return Ok(IsDeleted);
         }
+
+        [HttpPost]
+        [Route("SuspendreUser")]
+        public async Task<IActionResult> SuspendreUser([FromQuery] int idUser,[FromQuery] bool suspendre)
+        {
+            var result = await _utilisateurService.SuspendreUser(idUser, suspendre);
+            if (!result) return NotFound("Utilisateur non trouvé");
+
+            return Ok(new { success = true, estSuspendu = suspendre });
+        }
     }
 }

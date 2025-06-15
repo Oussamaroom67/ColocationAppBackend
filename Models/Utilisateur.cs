@@ -23,6 +23,7 @@ namespace ColocationAppBackend.Models
         public DateTime DernierConnexion { get; set; }
         public DateTime DateModification { get; set; }
         public string? AvatarUrl { get; set; }
+        public DateTime? LastSuspendedAt { get; set; }
 
         public ICollection<Conversation> ConversationsParticipant1 { get; set; }
         public ICollection<Conversation> ConversationsParticipant2 { get; set; }

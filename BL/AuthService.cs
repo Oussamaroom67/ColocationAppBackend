@@ -21,6 +21,13 @@ public class AuthService : IAuthService
         _context = context;
         _configuration = configuration;
     }
+    private bool IsUserSuspended(Utilisateur user)
+    {
+        if (user.LastSuspendedAt == null)
+            return false;
+
+        return user.LastSuspendedAt.Value.AddDays(7) > DateTime.UtcNow;
+    }
 
     public async Task<AuthResponseDto> RegisterEtudiantAsync(RegisterEtudiantDto dto)
     {
@@ -85,6 +92,9 @@ public class AuthService : IAuthService
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.MotDePasse))
             throw new Exception("Email ou mot de passe incorrect.");
+
+        if (IsUserSuspended(user))
+            throw new Exception("Votre compte est suspendu pendant 7 jours.");
 
         user.DernierConnexion = DateTime.UtcNow;
         await _context.SaveChangesAsync();
