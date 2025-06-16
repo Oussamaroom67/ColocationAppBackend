@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ColocationAppBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,11 +23,12 @@ namespace ColocationAppBackend.Migrations
                     Telephone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Prenom = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateInscription = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EstActif = table.Column<bool>(type: "bit", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     EstVerifie = table.Column<bool>(type: "bit", nullable: false),
                     DernierConnexion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateModification = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastSuspendedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     NiveauEtudes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Etudiant_Adresse = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -257,6 +258,39 @@ namespace ColocationAppBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DemandesLocation",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AnnonceId = table.Column<int>(type: "int", nullable: false),
+                    EtudiantId = table.Column<int>(type: "int", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateEmmenagement = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DureeSejour = table.Column<int>(type: "int", nullable: false),
+                    NbOccupants = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<int>(type: "int", nullable: false),
+                    MessageReponse = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateReponse = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateCreation = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DemandesLocation", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DemandesLocation_Annonces_AnnonceId",
+                        column: x => x.AnnonceId,
+                        principalTable: "Annonces",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DemandesLocation_Utilisateurs_EtudiantId",
+                        column: x => x.EtudiantId,
+                        principalTable: "Utilisateurs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Favoris",
                 columns: table => new
                 {
@@ -388,6 +422,16 @@ namespace ColocationAppBackend.Migrations
                 column: "EtudiantId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DemandesLocation_AnnonceId",
+                table: "DemandesLocation",
+                column: "AnnonceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DemandesLocation_EtudiantId",
+                table: "DemandesLocation",
+                column: "EtudiantId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Favoris_AnnonceId",
                 table: "Favoris",
                 column: "AnnonceId");
@@ -453,6 +497,9 @@ namespace ColocationAppBackend.Migrations
         {
             migrationBuilder.DropTable(
                 name: "DemandesColocation");
+
+            migrationBuilder.DropTable(
+                name: "DemandesLocation");
 
             migrationBuilder.DropTable(
                 name: "Favoris");
