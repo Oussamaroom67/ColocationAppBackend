@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250613011605_FixDemandeLocationAnnonceRelation")]
-    partial class FixDemandeLocationAnnonceRelation
+    [Migration("20250616152535_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -534,11 +534,11 @@ namespace ColocationAppBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("EstActif")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("EstVerifie")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastSuspendedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MotDePasse")
                         .IsRequired()
@@ -551,6 +551,9 @@ namespace ColocationAppBackend.Migrations
                     b.Property<string>("Prenom")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Telephone")
                         .HasColumnType("nvarchar(max)");

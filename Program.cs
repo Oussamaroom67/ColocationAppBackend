@@ -39,6 +39,9 @@ namespace ColocationAppBackend
             //signal r pour les messages en temps réel
             builder.Services.AddSignalR();
             builder.Services.AddScoped<IMessageService, MessageService>();
+            //signalement service
+            builder.Services.AddScoped<SignalementService>();
+
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
