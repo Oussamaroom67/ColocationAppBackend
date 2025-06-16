@@ -1,6 +1,7 @@
 
 using ColocationAppBackend.BL;
 using ColocationAppBackend.Data;
+using ColocationAppBackend.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,6 +36,9 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<LogementService>();
             //recommendation des colocations 
             builder.Services.AddScoped<RecommendationManager>();
+            //signal r pour les messages en temps réel
+            builder.Services.AddSignalR();
+            builder.Services.AddScoped<IMessageService, MessageService>();
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
@@ -65,6 +69,8 @@ namespace ColocationAppBackend
 
 
             var app = builder.Build();
+            
+            app.MapHub<ChatHub>("/chathub");
 
             app.UseAuthentication();
             app.UseMiddleware<UserSuspensionMiddleware>();

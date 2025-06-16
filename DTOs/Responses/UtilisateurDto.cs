@@ -13,5 +13,8 @@
         public int NbrEtudiants { get; set; }
         public int NbrAdministrateurs { get; set; }
         public DateTime DateInscription { get; set; }
+        public string Prenom { get; set; }
+        public string AvatarUrl { get; set; }
+        public bool EstEnLigne { get; set; }
     }
 }

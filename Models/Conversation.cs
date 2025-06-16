@@ -2,7 +2,7 @@
 {
     public class Conversation
     {
-        protected Conversation() { 
+        public Conversation() { 
             Messages = new HashSet<Message>();
         }
         public int Id { get; set; }
