@@ -43,5 +43,19 @@ namespace ColocationAppBackend.Controllers
                 return BadRequest($"Erreur lors du filtrage: {ex.Message}");
             }
         }
+        [HttpGet]
+        public ActionResult<List<Annonce>> GetAll()
+        {
+            try
+            {
+                var result = _filterService.GetAllAnnonces();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erreur lors du filtrage: {ex.Message}");
+            }
+        }
+
     }
 }

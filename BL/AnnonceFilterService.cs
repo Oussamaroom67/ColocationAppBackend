@@ -1,19 +1,26 @@
 ﻿using ColocationAppBackend.Data;
 using ColocationAppBackend.DTOs.Requests;
+using ColocationAppBackend.DTOs.Responses;
 using ColocationAppBackend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ColocationAppBackend.BL
 {
     public class AnnonceFilterService
     {
         private readonly ApplicationDbContext _context;
+
         public AnnonceFilterService(ApplicationDbContext context)
         {
             _context = context;
         }
-        public List<Annonce> FilterBasic(BasicFilterDTO filter)
+
+        public List<AnnonceResponse> FilterBasic(BasicFilterDTO filter)
         {
-            var query = _context.Annonces.AsQueryable();
+            var query = _context.Annonces
+                .Include(a => a.Logement)
+                .Include(a => a.Photos)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(filter.Ville))
                 query = query.Where(a => a.Logement.Ville == filter.Ville);
@@ -24,12 +31,26 @@ namespace ColocationAppBackend.BL
             if (filter.MinPrice.HasValue)
                 query = query.Where(a => a.Prix <= filter.MinPrice.Value);
 
-            return query.ToList();
+            return query.Select(a => new AnnonceResponse
+            {
+                AnnonceId = a.Id,
+                LogementId = a.LogementId,
+                Title = a.Titre,
+                Type = a.Logement.Type,
+                Prix = a.Prix,
+                Ville = a.Logement.Ville,
+                Beds = a.Logement.NbChambres,
+                Baths = a.Logement.NbSallesBain,
+                Photos = a.Photos.Select(p => new PhotoDto { Url = p.Url }).ToList()
+            }).ToList();
         }
 
-        public List<Annonce> FilterAdvanced(AdvancedFilterDTO filter)
+        public List<AnnonceResponse> FilterAdvanced(AdvancedFilterDTO filter)
         {
-            var query = _context.Annonces.AsQueryable();
+            var query = _context.Annonces
+                .Include(a => a.Logement)
+                .Include(a => a.Photos)
+                .AsQueryable();
 
             if (filter.PropertyType != null && filter.PropertyType.Any())
                 query = query.Where(a => filter.PropertyType.Contains(a.Logement.Type));
@@ -46,20 +67,50 @@ namespace ColocationAppBackend.BL
                 {
                     switch (amenity.ToLower())
                     {
-                        case "Parking":
+                        case "parking":
                             query = query.Where(a => a.Logement.ParkingDisponible == true);
                             break;
-                        case "WiFi included":
+                        case "wifi included":
                             query = query.Where(a => a.Logement.InternetInclus == true);
                             break;
-                        case "Pet Friendly":
+                        case "pet friendly":
                             query = query.Where(a => a.Logement.AnimauxAutorises == true);
                             break;
                     }
                 }
             }
-            return query.ToList();
+
+            return query.Select(a => new AnnonceResponse
+            {
+                AnnonceId = a.Id,
+                LogementId = a.LogementId,
+                Title = a.Titre,
+                Type = a.Logement.Type,
+                Prix = a.Prix,
+                Ville = a.Logement.Ville,
+                Beds = a.Logement.NbChambres,
+                Baths = a.Logement.NbSallesBain,
+                Photos = a.Photos.Select(p => new PhotoDto { Url = p.Url }).ToList()
+            }).ToList();
         }
-        //Get All Annonces
+
+        public List<AnnonceResponse> GetAllAnnonces()
+        {
+            return _context.Annonces
+                .Include(a => a.Logement)
+                .Include(a => a.Photos)
+                .Select(a => new AnnonceResponse
+                {
+                    AnnonceId = a.Id,
+                    LogementId = a.LogementId,
+                    Title = a.Titre,
+                    Type = a.Logement.Type,
+                    Prix = a.Prix,
+                    Ville = a.Logement.Ville,
+                    Beds = a.Logement.NbChambres,
+                    Baths = a.Logement.NbSallesBain,
+                    Photos = a.Photos.Select(p => new PhotoDto { Url = p.Url }).ToList()
+                }).ToList();
+        }
     }
 }
