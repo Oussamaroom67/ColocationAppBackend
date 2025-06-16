@@ -8,9 +8,11 @@ namespace ColocationAppBackend.DTOs.Responses
         public int LogementId { get; set; }
         public string Title { get; set; }
         public decimal Prix { get; set; }
-
+        public string Type { get; set; }
         public string Ville { get; set; }
         public List<PhotoDto> Photos { get; set; }
+        public int Beds { get; set; }
+        public int Baths { get; set; }
     }
 
 }

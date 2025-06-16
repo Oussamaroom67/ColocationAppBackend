@@ -33,7 +33,7 @@ namespace ColocationAppBackend.Models
         [Column(TypeName = "decimal(9,6)")]
         public decimal Longitude { get; set; }
 
-        public int? NbSallesBain { get; set; }
+        public int NbSallesBain { get; set; }
 
         public int? Etage { get; set; }
 
@@ -51,7 +51,7 @@ namespace ColocationAppBackend.Models
 
         public bool ParkingDisponible { get; set; }
         //type de logement
-        public string? Type { get; set; }
+        public string Type { get; set; }
 
         [ForeignKey("Proprietaire")]
         [Required(ErrorMessage = "L'identifiant du propriétaire est obligatoire.")]
