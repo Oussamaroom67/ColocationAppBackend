@@ -49,5 +49,63 @@ namespace ColocationAppBackend.Controllers
                 return StatusCode(500, "Une erreur est survenue lors de la récupération des statistiques");
             }
         }
+
+        /// <summary>
+        /// Récupère les 3 derniers messages reçus par l'étudiant connecté
+        /// </summary>
+        /// <returns>Liste des 3 derniers messages</returns>
+        [HttpGet("recent-messages")]
+        public async Task<ActionResult<List<MessageRecentDto>>> GetRecentMessages()
+        {
+            try
+            {
+                // Récupérer l'ID de l'étudiant depuis le token
+                var etudiantIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(etudiantIdClaim) || !int.TryParse(etudiantIdClaim, out int etudiantId))
+                {
+                    return Unauthorized("Token invalide");
+                }
+
+                var messages = await _dashboardStudentService.GetRecentMessagesAsync(etudiantId);
+                return Ok(messages);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Une erreur est survenue lors de la récupération des messages");
+            }
+        }
+
+        /// <summary>
+        /// Récupère les 3 dernières annonces publiées récemment
+        /// </summary>
+        /// <returns>Liste des 3 dernières annonces</returns>
+        [HttpGet("recent-properties")]
+        public async Task<ActionResult<List<PropertyRecentDto>>> GetRecentProperties()
+        {
+            try
+            {
+                // Récupérer l'ID de l'étudiant depuis le token
+                var etudiantIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(etudiantIdClaim) || !int.TryParse(etudiantIdClaim, out int etudiantId))
+                {
+                    return Unauthorized("Token invalide");
+                }
+
+                var properties = await _dashboardStudentService.GetRecentPropertiesAsync(etudiantId);
+                return Ok(properties);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Une erreur est survenue lors de la récupération des propriétés");
+            }
+        }
     }
 }
