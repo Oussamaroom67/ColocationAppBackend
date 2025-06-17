@@ -108,5 +108,34 @@ namespace ColocationAppBackend.BL
 
             return propertiesRecentes;
         }
+
+        public async Task<List<DemandeColocationRecuDto>> GetDemandesColocationAsync(int etudiantId)
+        {
+            // Vérifier que l'étudiant existe
+            var etudiant = await _context.Etudiants
+                .FirstOrDefaultAsync(e => e.Id == etudiantId);
+            if (etudiant == null)
+                throw new ArgumentException("Étudiant non trouvé");
+
+            // Récupérer les demandes de colocations pour les colocations de l'étudiant
+            var demandes = await _context.DemandesColocation
+                .Where(dc => dc.Colocation.EtudiantId == etudiantId) // Colocations appartenant à l'étudiant
+                .Include(dc => dc.Etudiant) // Informations du demandeur
+                .Include(dc => dc.Colocation) // Informations de la colocation
+                .OrderByDescending(dc => dc.DateCreation)
+                .Select(dc => new DemandeColocationRecuDto
+                {
+                    Id = dc.Id,
+                    NomDemandeur = dc.Etudiant.Nom,
+                    PrenomDemandeur = dc.Etudiant.Prenom,
+                    UniversiteDemandeur = dc.Etudiant.Universite,
+                    ColocationId = dc.ColocationId,
+                    BudgetDemandeur = dc.Budget,
+                    Adresse = dc.Adresse
+                })
+                .ToListAsync();
+
+            return demandes;
+        }
     }
 }
