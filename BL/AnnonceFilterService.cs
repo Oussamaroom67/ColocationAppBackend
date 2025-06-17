@@ -28,7 +28,7 @@ namespace ColocationAppBackend.BL
             if (!string.IsNullOrEmpty(filter.PropertyType))
                 query = query.Where(a => a.Logement.Type == filter.PropertyType);
 
-            if (filter.MinPrice.HasValue)
+            if (filter.MinPrice.HasValue && filter.MinPrice.Value > 0)
                 query = query.Where(a => a.Prix <= filter.MinPrice.Value);
 
             return query.Select(a => new AnnonceResponse

@@ -50,6 +50,8 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<IMessageService, MessageService>();
             //signalement service
             builder.Services.AddScoped<SignalementService>();
+            //stats dashbord student 
+            builder.Services.AddScoped<DashboardStudentService>();
 
 
             builder.Services.AddControllers()
