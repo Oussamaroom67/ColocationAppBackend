@@ -52,7 +52,12 @@ public class AuthService : IAuthService
             DateModification = DateTime.UtcNow,
             AvatarUrl = dto.PhotoUrl,
             Bio = dto.Bio,
-            Telephone = dto.Telephone
+            Telephone = dto.Telephone, 
+            Habitudes = dto.Habitudes.Select(h => h.ToString()).ToList(),
+            CentresInteret = dto.CentresInteret.Select(ci => ci.ToString()).ToList(),
+            StyleDeVie = dto.StyleDeVie.Select(sd => sd.ToString()).ToList(),
+
+
         };
 
         _context.Etudiants.Add(etudiant);

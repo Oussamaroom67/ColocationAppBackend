@@ -4,7 +4,7 @@
     {
         Etudiant,
         Actif,
-        Résevrvé,
+        Réservé,
         Fetard,
         Studieux,
         Sportif,
