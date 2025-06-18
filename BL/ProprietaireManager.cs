@@ -131,7 +131,7 @@ namespace ColocationAppBackend.BL
                     DisponibleJusqu = DateTime.Now.AddMonths(12),
                     DureeMinMois = int.TryParse(req.DesiredDuration, out int d) ? d : 1,
                     OccupantsMax = 1,
-                    Statut = AnnonceStatus.Brouillon,
+                    Statut = req.Status != default ? req.Status : AnnonceStatus.Brouillon,
                     NbVues = 0,
                     DateModification = DateTime.Now,
                     Photos = req.Photos?.Select(p => new Photo

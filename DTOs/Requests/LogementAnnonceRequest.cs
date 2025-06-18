@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ColocationAppBackend.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace ColocationAppBackend.DTOs.Requests
 {
@@ -72,5 +73,7 @@ namespace ColocationAppBackend.DTOs.Requests
         public string HouseRules { get; set; }
 
         public List<PhotoDto> Photos { get; set; } = new();
+        
+        public AnnonceStatus Status { get; set; }
     }
 }
