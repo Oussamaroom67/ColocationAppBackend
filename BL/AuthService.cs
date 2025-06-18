@@ -46,10 +46,13 @@ public class AuthService : IAuthService
             Adresse = dto.Adresse,
             Budget = dto.Budget,
             DateInscription = DateTime.UtcNow,
-            Status=UtilisateurStatus.Actif,
+            Status = UtilisateurStatus.Actif,
             EstVerifie = false,
             DernierConnexion = DateTime.UtcNow,
-            DateModification = DateTime.UtcNow
+            DateModification = DateTime.UtcNow,
+            AvatarUrl = dto.PhotoUrl,
+            Bio = dto.Bio,
+            Telephone = dto.Telephone
         };
 
         _context.Etudiants.Add(etudiant);
@@ -77,7 +80,9 @@ public class AuthService : IAuthService
             Status = UtilisateurStatus.Actif,
             EstVerifie = false,
             DernierConnexion = DateTime.UtcNow,
-            DateModification = DateTime.UtcNow
+            DateModification = DateTime.UtcNow,
+            Telephone = dto.Telephone,
+            AvatarUrl = dto.PhotoUrl
         };
 
         _context.Proprietaires.Add(proprio);
