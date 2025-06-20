@@ -13,6 +13,7 @@ namespace ColocationAppBackend.DTOs.Responses
         public List<PhotoDto> Photos { get; set; }
         public int Beds { get; set; }
         public int Baths { get; set; }
+        public Boolean isFavorite { get; set; }
     }
 
 }

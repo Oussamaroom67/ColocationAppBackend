@@ -22,8 +22,10 @@ namespace ColocationAppBackend.BL
                               ((type == TypeFavori.Propriete && f.AnnonceId == elementId) ||
                                (type == TypeFavori.Colocation && f.OffreColocationId == elementId)));
 
-            if (existe) return;
-
+            if (existe)
+            {
+                return;
+            }
             var favori = new Favori
             {
                 EtudiantId = etudiantId,
@@ -31,7 +33,6 @@ namespace ColocationAppBackend.BL
                 AnnonceId = type == TypeFavori.Propriete ? elementId : null,
                 OffreColocationId = type == TypeFavori.Colocation ? elementId : null
             };
-
             _context.Favoris.Add(favori);
             await _context.SaveChangesAsync();
         }

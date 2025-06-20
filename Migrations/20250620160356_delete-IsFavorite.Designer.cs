@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250616152535_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250620160356_delete-IsFavorite")]
+    partial class deleteIsFavorite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -332,7 +332,7 @@ namespace ColocationAppBackend.Migrations
                     b.Property<int?>("NbEtagesTotal")
                         .HasColumnType("int");
 
-                    b.Property<int?>("NbSallesBain")
+                    b.Property<int>("NbSallesBain")
                         .HasColumnType("int");
 
                     b.Property<bool>("ParkingDisponible")
@@ -349,6 +349,7 @@ namespace ColocationAppBackend.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ville")

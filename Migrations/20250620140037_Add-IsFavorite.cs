@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ColocationAppBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddIsFavorite : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -118,7 +118,7 @@ namespace ColocationAppBackend.Migrations
                     Pays = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Latitude = table.Column<decimal>(type: "decimal(9,6)", nullable: false),
                     Longitude = table.Column<decimal>(type: "decimal(9,6)", nullable: false),
-                    NbSallesBain = table.Column<int>(type: "int", nullable: true),
+                    NbSallesBain = table.Column<int>(type: "int", nullable: false),
                     Etage = table.Column<int>(type: "int", nullable: true),
                     NbEtagesTotal = table.Column<int>(type: "int", nullable: true),
                     EstMeuble = table.Column<bool>(type: "bit", nullable: false),
@@ -127,7 +127,7 @@ namespace ColocationAppBackend.Migrations
                     InternetInclus = table.Column<bool>(type: "bit", nullable: false),
                     ChargesIncluses = table.Column<bool>(type: "bit", nullable: false),
                     ParkingDisponible = table.Column<bool>(type: "bit", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProprietaireId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -244,6 +244,7 @@ namespace ColocationAppBackend.Migrations
                     Statut = table.Column<int>(type: "int", nullable: false),
                     NbVues = table.Column<int>(type: "int", nullable: false),
                     DateModification = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsFavorite = table.Column<bool>(type: "bit", nullable: false),
                     LogementId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
