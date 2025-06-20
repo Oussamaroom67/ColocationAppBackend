@@ -52,15 +52,36 @@ namespace ColocationAppBackend.BL
                 .Include(a => a.Photos)
                 .AsQueryable();
 
+            if (filter.Price.HasValue)
+                query = query.Where(a => a.Prix <= filter.Price);
+
             if (filter.PropertyType != null && filter.PropertyType.Any())
                 query = query.Where(a => filter.PropertyType.Contains(a.Logement.Type));
 
-            if (filter.Bedrooms.HasValue)
-                query = query.Where(a => a.Logement.NbChambres == filter.Bedrooms.Value);
+            if (filter.Bedrooms != null)
+                query = filter.Bedrooms switch
+                {
+                    "1" => query.Where(a => a.Logement.NbChambres == 1),
+                    "2" => query.Where(a => a.Logement.NbChambres == 2),
+                    "3" => query.Where(a => a.Logement.NbChambres == 3),
+                    "4+" => query.Where(a => a.Logement.NbChambres >= 4),
+                    "Any" => query,
+                    _ => query
+                };
 
-            if (filter.Bathrooms.HasValue)
-                query = query.Where(a => a.Logement.NbSallesBain == filter.Bathrooms.Value);
-
+            if (filter.Bathrooms != null)
+            {
+                query = filter.Bathrooms switch
+                {
+                    "1" => query.Where(a => a.Logement.NbSallesBain == 1),
+                    "2" => query.Where(a => a.Logement.NbSallesBain == 2),
+                    "3" => query.Where(a => a.Logement.NbSallesBain == 3),
+                    "4+" => query.Where(a => a.Logement.NbSallesBain >= 4),
+                    "Any" => query,
+                    _ => query
+                };
+            }
+                
             if (filter.Amenities != null && filter.Amenities.Any())
             {
                 foreach (var amenity in filter.Amenities)
@@ -70,10 +91,10 @@ namespace ColocationAppBackend.BL
                         case "parking":
                             query = query.Where(a => a.Logement.ParkingDisponible == true);
                             break;
-                        case "wifi included":
+                        case "Wi-Fi inclus":
                             query = query.Where(a => a.Logement.InternetInclus == true);
                             break;
-                        case "pet friendly":
+                        case "Animaux acceptés":
                             query = query.Where(a => a.Logement.AnimauxAutorises == true);
                             break;
                     }
