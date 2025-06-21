@@ -42,7 +42,7 @@ namespace ColocationAppBackend.BL
                 ColocationId = colocation.Id,
                 Adresse = colocation.Adresse,
                 Budget = colocation.Budget,
-                Type = colocation.Type.ToString(),
+                Type = colocation.Type,
                 DateDebutDisponibilite = colocation.DateDebutDisponibilite,
                 Preferences = colocation.Preferences,
                 NomEtudiant = $"{etudiant.Prenom} {etudiant.Nom}"

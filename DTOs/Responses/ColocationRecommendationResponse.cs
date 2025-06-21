@@ -1,4 +1,6 @@
-﻿namespace ColocationAppBackend.DTOs.Responses
+﻿using ColocationAppBackend.Enums;
+
+namespace ColocationAppBackend.DTOs.Responses
 {
     public class ColocationRecommendationResponse
     {
@@ -8,7 +10,7 @@
         public string Budget { get; set; }
         public string MoveInDate { get; set; }
         public string PreferredZone { get; set; }
-        public string Type { get; set; }
+        public ColocationType Type { get; set; }
         public float RecommendationScore { get; set; }
         public bool IsRecommended { get; set; }
         public List<string> Preferences { get; set; }

@@ -46,6 +46,7 @@ namespace ColocationAppBackend.BL
                         c.DateDebutDisponibilite,
                         c.Adresse,
                         c.Preferences,
+                        c.Type,
                         Etudiant = new
                         {
                             c.Etudiant.Id,
@@ -55,7 +56,8 @@ namespace ColocationAppBackend.BL
                             c.Etudiant.AvatarUrl
                         }
                     })
-                    .Take(50) // Limiter le nombre de résultats pour éviter la surcharge
+                    .Take(50) 
+                    .AsNoTracking()
                     .ToListAsync();
 
                 var results = new List<ColocationRecommendationResponse>();
@@ -74,7 +76,7 @@ namespace ColocationAppBackend.BL
                         Budget = $"{colocation.Budget:0} MAD/mois",
                         MoveInDate = colocation.DateDebutDisponibilite.ToString("dd/MM/yyyy"),
                         PreferredZone = quartier,
-                        Type = "Offre",
+                        Type = colocation.Type,
                         RecommendationScore = score,
                         IsRecommended = _engine.IsRecommended(score),
                         Preferences = colocation.Preferences ?? new List<string>(),
