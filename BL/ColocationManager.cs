@@ -211,7 +211,16 @@ namespace ColocationAppBackend.BL
             // Filtrer par budget maximum si spécifié
             if (request.BudgetMax.HasValue)
             {
-                query = query.Where(c => c.Budget <= (double)request.BudgetMax.Value);
+                if (request.BudgetMax.Value == 4000)
+                {
+                    query = query.Where(c => c.Budget >=4000);
+
+                }
+                else
+                {
+                    query = query.Where(c => c.Budget <= (double)request.BudgetMax.Value);
+
+                }
             }
 
         
@@ -236,7 +245,7 @@ namespace ColocationAppBackend.BL
                 Budget = (decimal)c.Budget,
                 MoveInDate = c.DateDebutDisponibilite.ToString("dd/MM/yyyy"),
                 PreferredZone = c.Adresse,
-                Type = "Offre", // Comme spécifié dans votre exemple
+                Type = c.Type,
                 Preferences = c.Preferences
             }).ToList();
         }
