@@ -23,6 +23,14 @@ namespace ColocationAppBackend.Controllers
 
             return Ok(annonce);
         }
+        [HttpGet("{id}/similar")]
+        public IActionResult GetSimilarAnnonces(int id)
+        {
+            var annonces = _service.GetSimilarAnnonces(id);
+            if (annonces == null)
+                return NotFound("Annonce non trouvée .");
+            return Ok(annonces);
+        }
 
     }
 }

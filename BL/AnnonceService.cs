@@ -1,4 +1,8 @@
 ﻿using ColocationAppBackend.Data;
+using ColocationAppBackend.DTOs.Requests;
+using ColocationAppBackend.DTOs.Responses;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 public class AnnonceService
@@ -59,9 +63,50 @@ public class AnnonceService
                 annonce.Logement.Proprietaire.Nom,
                 annonce.Logement.Proprietaire.Prenom,
                 annonce.Logement.Proprietaire.Email,
-                annonce.Logement.Proprietaire.NoteGlobale
+                annonce.Logement.Proprietaire.NoteGlobale,
+                annonce.Logement.Proprietaire.Telephone,
+                annonce.Logement.Proprietaire.AvatarUrl
             },
             Photos = annonce.Photos.Select(p => new { p.Id, p.Url })
         };
+    }
+    public  List<AnnonceResponse> GetSimilarAnnonces(int id)
+    {
+        var annonce =  _context.Annonces
+            .Include(a=>a.Logement)
+            .FirstOrDefault(a => a.Id == id);
+
+        if (annonce == null )
+            return null;
+
+        var similarAnnonces = _context.Annonces
+            .Where(a => a.Id != id &&
+                        a.Logement.Type == annonce.Logement.Type &&
+                        a.Logement.Ville == a.Logement.Ville &&
+                        Math.Abs(a.Prix - annonce.Prix) < 1000
+            )
+            .Include(a=>a.Logement)
+            .Include(a => a.Photos)
+            .Select(a => new AnnonceResponse
+                {
+                   AnnonceId = a.Id,
+                   LogementId = a.LogementId,
+                   Title = a.Titre,
+                   Type = a.Logement.Type,
+                   Prix = a.Prix,
+                   Ville = a.Logement.Ville,
+                   Beds = a.Logement.NbChambres,
+                   Baths = a.Logement.NbSallesBain,
+                   Photos = a.Photos.Select(p => new PhotoDto { Url = p.Url }).ToList()
+                })
+            .Take(4)
+            .ToList();
+
+        return similarAnnonces;
+    }
+
+    private IActionResult NotFoundResult()
+    {
+        throw new NotImplementedException();
     }
 }
