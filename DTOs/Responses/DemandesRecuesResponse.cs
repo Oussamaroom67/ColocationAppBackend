@@ -13,5 +13,6 @@
         public string ColocationAdresse { get; set; }
         public string? ReponseEnvoyee { get; set; }
         public string? DateReponse { get; set; }
+        public int ColocataireId { get; set; }
     }
 }

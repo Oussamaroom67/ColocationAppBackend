@@ -196,7 +196,8 @@ namespace ColocationAppBackend.BL
                 Statut = EnumHelper.GetStatutFrancais(d.Statut),
                 ColocationAdresse = d.Colocation.Adresse,
                 ReponseEnvoyee = d.ReponseProprietaire,
-                DateReponse = d.DateReponse?.ToString("yyyy-MM-dd")
+                DateReponse = d.DateReponse?.ToString("yyyy-MM-dd"),
+                ColocataireId=d.EtudiantId
             }).ToList();
         }
 

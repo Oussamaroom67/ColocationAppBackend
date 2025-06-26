@@ -73,24 +73,43 @@ namespace ColocationAppBackend
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = false,  // Tu peux activer plus tard si tu veux
+                    ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
+                    RequireExpirationTime = true,
+                    ClockSkew = TimeSpan.Zero,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+
             });
 
 
             var app = builder.Build();
             
-            app.MapHub<ChatHub>("/chathub");
 
             app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseMiddleware<UserSuspensionMiddleware>();
             app.UseAuthorization();
 
+            app.MapHub<ChatHub>("/chathub");
 
             if (app.Environment.IsDevelopment())
             {

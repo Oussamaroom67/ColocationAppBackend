@@ -131,7 +131,8 @@ namespace ColocationAppBackend.BL
                     UniversiteDemandeur = dc.Etudiant.Universite,
                     ColocationId = dc.ColocationId,
                     BudgetDemandeur = dc.Budget,
-                    Adresse = dc.Adresse
+                    Adresse = dc.Adresse,
+                    DateEmmenagement=dc.DateEmmenagement
                 })
                 .ToListAsync();
 

@@ -293,7 +293,7 @@ namespace ColocationAppBackend.BL
             // Cette méthode devrait vérifier si l'utilisateur est actuellement connecté
             // Pour simplifier, on considère qu'un utilisateur est en ligne s'il s'est connecté dans les 5 dernières minutes
             var user = _context.Utilisateurs.Find(userId);
-            return user != null && user.DernierConnexion > DateTime.UtcNow.AddMinutes(-5);
+            return user != null && user.DernierConnexion > DateTime.UtcNow.AddMinutes(-1);
         }
     }
 }
