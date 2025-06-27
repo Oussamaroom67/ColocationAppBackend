@@ -121,7 +121,7 @@ public class AuthService : IAuthService
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Nom),
-            new Claim(ClaimTypes.Role, user.GetType().Name) 
+            new Claim(ClaimTypes.Role, user.GetType().Name)
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -138,7 +138,8 @@ public class AuthService : IAuthService
         {
             Token = jwt,
             Role = user.GetType().Name,
-            Nom = user.Prenom
+            Nom = user.Prenom,
+            UrlPhoto = user.AvatarUrl,
         };
     }
 }

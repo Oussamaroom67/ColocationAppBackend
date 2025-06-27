@@ -5,5 +5,6 @@
         public string Token { get; set; }
         public string Role { get; set; }
         public string Nom { get; set; }
+        public string? UrlPhoto { get; internal set; }
     }
 }
