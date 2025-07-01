@@ -35,7 +35,8 @@ namespace ColocationAppBackend.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { error = ex.Message });
+                var detailedError = ex.InnerException?.Message ?? ex.Message;
+                return BadRequest(new { error = "Erreur : " + detailedError });
             }
         }
 

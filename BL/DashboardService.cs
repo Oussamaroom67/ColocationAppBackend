@@ -52,7 +52,7 @@ namespace ColocationAppBackend.BL
                     FullName = l.Logement.Proprietaire.Nom + " " + l.Logement.Proprietaire.Prenom,
                     Role = "Propriétaire",
                     Action = $"a ajouté une annonce : '{l.Titre}'",
-                    Date = l.DateModification
+                    Date = l.DateModification,
                 })
                 .ToListAsync();
 

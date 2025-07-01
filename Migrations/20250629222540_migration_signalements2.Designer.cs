@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250620140037_Add-IsFavorite")]
-    partial class AddIsFavorite
+    [Migration("20250629222540_migration_signalements2")]
+    partial class migration_signalements2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,9 +54,6 @@ namespace ColocationAppBackend.Migrations
 
                     b.Property<int>("DureeMinMois")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsFavorite")
-                        .HasColumnType("bit");
 
                     b.Property<int>("LogementId")
                         .HasColumnType("int");
@@ -490,11 +487,19 @@ namespace ColocationAppBackend.Migrations
                     b.Property<int>("SignaleurId")
                         .HasColumnType("int");
 
+                    b.Property<string>("SignaleurName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Statut")
                         .HasColumnType("int");
 
                     b.Property<int>("UtilisateurSignaleId")
                         .HasColumnType("int");
+
+                    b.Property<string>("UtilisateurSignaleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

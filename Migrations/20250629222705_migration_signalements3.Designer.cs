@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250620160356_delete-IsFavorite")]
-    partial class deleteIsFavorite
+    [Migration("20250629222705_migration_signalements3")]
+    partial class migration_signalements3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ColocationAppBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIsFavorite : Migration
+    public partial class initialCreat : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -244,7 +244,6 @@ namespace ColocationAppBackend.Migrations
                     Statut = table.Column<int>(type: "int", nullable: false),
                     NbVues = table.Column<int>(type: "int", nullable: false),
                     DateModification = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsFavorite = table.Column<bool>(type: "bit", nullable: false),
                     LogementId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

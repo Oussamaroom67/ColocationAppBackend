@@ -18,26 +18,22 @@ namespace ColocationAppBackend.BL
         public async Task<AnalyticsDTO> GetAnalyticsAsync()
         {
             // Récupération des données de base depuis la base de données
-            var logements = await _context.Logements.ToListAsync();
             var reservations = await _context.DemandesLocation.ToListAsync();
-            var utilisateurs = await _context.Utilisateurs.ToListAsync();
             var annonces = await _context.Annonces.ToListAsync();
-            var etudiants = await _context.Etudiants.ToListAsync();
-            var demandesColocation = await _context.DemandesColocation.ToListAsync();
 
             // Calcul du taux d'occupation global
-            var totalLogements = logements.Count;
+            var totalLogements = await _context.Logements.CountAsync();
             var logementsOccupes = annonces.Count(l => l.Statut == AnnonceStatus.Louee);
             var tauxOccupation = totalLogements == 0 ? 0 : (double)logementsOccupes / totalLogements * 100;
 
             // Comptage des étudiants et propriétaires
-            var totalEtudiants = utilisateurs.OfType<Etudiant>().Count();
-            var totalProprietaires = utilisateurs.OfType<Proprietaire>().Count();
+            var totalEtudiants = await _context.Etudiants.CountAsync();
+            var totalProprietaires = await _context.Proprietaires.CountAsync();
             var totalUtilisateurs = totalEtudiants + totalProprietaires;
 
             // Nombre total de réservations et calcul du loyer moyen
-            var totalReservations = reservations.Count();
-            var prixLoyerMoyen = annonces.Any() ? annonces.Average(l => l.Prix) : 0;
+            var totalReservations = await _context.DemandesLocation.CountAsync();
+            var prixLoyerMoyen = annonces.Count() != 0 ? annonces.Average(l => l.Prix) : 0;
 
             // Évolution des réservations sur les 6 derniers mois
             var now = DateTime.UtcNow;
@@ -51,7 +47,7 @@ namespace ColocationAppBackend.BL
 
                 return new ReservationMoisDto
                 {
-                    Mois = debut.ToString("MMM yyyy"),
+                    Mois = debut.ToString("MMM"),
                     NombreReservations = nombre,
                     TauxOccupation = occupation
                 };
@@ -63,14 +59,14 @@ namespace ColocationAppBackend.BL
             var evolutionPourcentage = lastMonthCount == 0 ? 0 : ((double)(thisMonthCount - lastMonthCount) / lastMonthCount) * 100;
 
             // Regrouper les logements par type
-            var repartitionParType = logements.GroupBy(l => l.Type).Select(g => new TypeLogementDto
+            var repartitionParType =  await _context.Logements.GroupBy(l => l.Type).Select(g => new TypeLogementDto
             {
                 Type = g.Key,
                 Count = g.Count()
-            }).ToList();
+            }).ToListAsync();
 
             // Regrouper les logements par ville avec calculs statistiques
-            var repartitionParVille = annonces
+            var repartitionParVille = await _context.Annonces
                 .GroupBy(l => l.Logement.Ville)
                 .Select(g => new VilleStatDto
                 {
@@ -78,34 +74,34 @@ namespace ColocationAppBackend.BL
                     NombreLogements = g.Count(),
                     PrixMoyen = (double)g.Average(l => l.Prix),
                     TauxOccupation = g.Count() == 0 ? 0 : (double)g.Count(l => l.Statut== AnnonceStatus.Louee) / g.Count() * 100
-                }).Take(5).ToList();
+                }).Take(5).ToListAsync();
 
             //Verfications des logements
             var verifies = annonces.Count(r => r.StatutVerification == VerificationLogementStatut.Verifie);
             var enAttente = annonces.Count(r => r.StatutVerification == VerificationLogementStatut.EnAttente);
             var rejetés = annonces.Count(r => r.StatutVerification == VerificationLogementStatut.Rejetée);
 
-            var TauxVerification = annonces.Count() == 0 ? 0 : verifies / annonces.Count() * 100;
+            var TauxVerification = annonces.Count() == 0 ? 0 : (double)verifies / annonces.Count() * 100;
 
             //repartition signalement selon les motif 
-            var repartitionSignalements = _context.Signalments
+            var repartitionSignalements = await _context.Signalments
             .GroupBy(s => s.Motif) 
             .Select(g => new SignalementMotifDto
             {
                 Motif = g.Key.ToString(),
                 Nombre = g.Count()
-            }).ToList();
+            }).ToListAsync();
             //repartition etudiants selon les Etablissements
-            var repartitionParEtablissement = etudiants.GroupBy(l => l.Universite).Select(g => new EtablissementStudentsDto
+            var repartitionParEtablissement =await _context.Etudiants.GroupBy(l => l.Universite).Select(g => new EtablissementStudentsDto
             {
                 Etablissement = g.Key,
                 NombreEtudiants = g.Count()
-            }).ToList();
+            }).ToListAsync();
 
             //partie Recherche Colocataire
-            var demandesActives = demandesColocation.Count();
-            var matchReussis = demandesColocation.Count(r => r.Statut == StatutDemande.Acceptee);
-            var TauxReussite = demandesColocation.Count() == 0 ? 0 : matchReussis / demandesColocation.Count() *100;
+            var demandesActives = await _context.DemandesColocation.CountAsync();
+            var matchReussis = await _context.DemandesColocation.CountAsync(r => r.Statut == StatutDemande.Acceptee);
+            var TauxReussite = demandesActives == 0 ? 0 : matchReussis / demandesActives *100;
 
             //Repartition etudiants par budgets 
 
@@ -113,23 +109,23 @@ namespace ColocationAppBackend.BL
             {
                 new BudgetEtudiantDto
                 {
-                    Tranche = "< 400€",
-                    NombreEtudiants = etudiants.Count(e => e.Budget < 400),
+                    Tranche = "< 400DH",
+                    NombreEtudiants = _context.Etudiants.Count(e => e.Budget < 400),
                 },
                 new BudgetEtudiantDto
                 {
-                    Tranche = "400€ - 600€",
-                    NombreEtudiants = etudiants.Count(e => e.Budget >= 400 && e.Budget <= 600),
+                    Tranche = "400DH - 600DH",
+                    NombreEtudiants = _context.Etudiants.Count(e => e.Budget >= 400 && e.Budget <= 600),
                 },
                 new BudgetEtudiantDto
                 {
-                    Tranche = "600€ - 800€",
-                    NombreEtudiants = etudiants.Count(e => e.Budget > 600 && e.Budget <= 800),
+                    Tranche = "600DH - 800DH",
+                    NombreEtudiants =_context.Etudiants.Count(e => e.Budget > 600 && e.Budget <= 800),
                 },
                 new BudgetEtudiantDto
                 {
-                    Tranche = "> 800€",
-                    NombreEtudiants = etudiants.Count(e => e.Budget > 800),
+                    Tranche = "> 800DH",
+                    NombreEtudiants = _context.Etudiants.Count(e => e.Budget > 800),
                 }
             };
 
