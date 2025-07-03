@@ -9,12 +9,16 @@ namespace ColocationAppBackend.BL
     public class AnnonceFilterService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
+        private string baseUrl;
 
-        public AnnonceFilterService(ApplicationDbContext context)
+        public AnnonceFilterService(ApplicationDbContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration=configuration;
+            baseUrl = _configuration["BaseUrl"];
         }
-
+        
         public List<AnnonceResponse> FilterBasic(BasicFilterDTO filter)
         {
             var query = _context.Annonces
@@ -41,7 +45,7 @@ namespace ColocationAppBackend.BL
                 Ville = a.Logement.Ville,
                 Beds = a.Logement.NbChambres,
                 Baths = a.Logement.NbSallesBain,
-                Photos = a.Photos.Select(p => new PhotoDto { Url = p.Url }).ToList()
+                Photos = a.Photos.Select(p => new PhotoDto { Url = $"{baseUrl}{p.Url}" }).ToList()
             }).ToList();
         }
 
@@ -130,7 +134,7 @@ namespace ColocationAppBackend.BL
                     Ville = a.Logement.Ville,
                     Beds = a.Logement.NbChambres,
                     Baths = a.Logement.NbSallesBain,
-                    Photos = a.Photos.Select(p => new PhotoDto { Url = p.Url }).ToList()
+                    Photos = a.Photos.Select(p => new PhotoDto { Url = $"{baseUrl}{p.Url}" }).ToList()
                 }).ToList();
         }
     }

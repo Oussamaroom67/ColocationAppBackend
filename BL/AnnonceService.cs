@@ -8,10 +8,15 @@ using Microsoft.EntityFrameworkCore;
 public class AnnonceService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IConfiguration _configuration;
 
-    public AnnonceService(ApplicationDbContext context)
+        private string baseUrl;
+
+    public AnnonceService(ApplicationDbContext context,IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
+        this.baseUrl = _configuration["BaseUrl"];
     }
 
     public object? GetById(int id)
@@ -67,7 +72,7 @@ public class AnnonceService
                 annonce.Logement.Proprietaire.Telephone,
                 annonce.Logement.Proprietaire.AvatarUrl
             },
-            Photos = annonce.Photos.Select(p => new { p.Id, p.Url })
+            Photos = annonce.Photos.Select(p => new { p.Id, Url = $"{baseUrl}{p.Url}" })
         };
     }
     public  List<AnnonceResponse> GetSimilarAnnonces(int id)
@@ -97,7 +102,7 @@ public class AnnonceService
                    Ville = a.Logement.Ville,
                    Beds = a.Logement.NbChambres,
                    Baths = a.Logement.NbSallesBain,
-                   Photos = a.Photos.Select(p => new PhotoDto { Url = p.Url }).ToList()
+                   Photos = a.Photos.Select(p => new PhotoDto { Url = $"{baseUrl}{p.Url}" ?? "https://wiratthungsong.com/wts/assets/img/default.png" }).ToList()
                 })
             .Take(4)
             .ToList();

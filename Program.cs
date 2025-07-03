@@ -109,7 +109,7 @@ namespace ColocationAppBackend
             app.UseAuthentication();
             app.UseMiddleware<UserSuspensionMiddleware>();
             app.UseAuthorization();
-
+            app.UseStaticFiles();
             app.MapHub<ChatHub>("/chathub");
 
             if (app.Environment.IsDevelopment())

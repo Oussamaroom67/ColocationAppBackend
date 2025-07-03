@@ -4,16 +4,58 @@ using ColocationAppBackend.DTOs.Responses;
 using ColocationAppBackend.Enums;
 using ColocationAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ColocationAppBackend.BL
 {
     public class ProprietaireManager
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ProprietaireManager(ApplicationDbContext context)
+
+        public ProprietaireManager(ApplicationDbContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
+
+        }
+
+        public async Task<string> SaveImageAsync(string base64Image, string fileName)
+        {
+            try
+            {
+                // Nettoie le base64 (retire data:image/jpeg;base64,)
+                var base64Data = base64Image.Contains(',')
+                    ? base64Image.Split(',')[1]
+                    : base64Image;
+
+                // Convertit en bytes
+                var imageBytes = Convert.FromBase64String(base64Data);
+
+                // Génère un nom unique
+                var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+
+                // Chemin de sauvegarde
+                var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "properties");
+
+                // Crée le dossier s'il n'existe pas
+                if (!Directory.Exists(uploadPath))
+                    Directory.CreateDirectory(uploadPath);
+
+                // Chemin complet du fichier
+                var filePath = Path.Combine(uploadPath, uniqueFileName);
+
+                // Sauvegarde le fichier
+                await File.WriteAllBytesAsync(filePath, imageBytes);
+
+                // Retourne l'URL relative
+                return $"/images/properties/{uniqueFileName}";
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erreur lors de la sauvegarde de l'image: {ex.Message}");
+            }
         }
 
         public async Task<AnnonceResponse> AjouterLogementEtAnnonceAsync(LogementAnnonceRequest req)
@@ -25,6 +67,34 @@ namespace ColocationAppBackend.BL
 
             Logement logement;
             Annonce annonce;
+
+            // Traitement des photos - sauvegarde des images base64
+            List<Photo> photosToSave = new List<Photo>();
+            if (req.Photos != null && req.Photos.Any())
+            {
+                foreach (var photo in req.Photos)
+                {
+                    string imageUrl;
+
+                    // Si c'est une image base64, on la sauvegarde
+                    if (photo.Url.StartsWith("data:image/"))
+                    {
+                        var fileName = !string.IsNullOrEmpty(photo.Name) ? photo.Name : "image.jpg";
+                        imageUrl = await SaveImageAsync(photo.Url, fileName);
+                    }
+                    else
+                    {
+                        // Si c'est déjà une URL, on la garde telle quelle
+                        imageUrl = photo.Url;
+                    }
+
+                    photosToSave.Add(new Photo
+                    {
+                        Url = imageUrl,
+                        DateAjout = DateTime.Now
+                    });
+                }
+            }
 
             if (req.LogementId.HasValue)
             {
@@ -72,11 +142,7 @@ namespace ColocationAppBackend.BL
                     {
                         _context.Photos.RemoveRange(annonce.Photos);
                     }
-                    annonce.Photos = req.Photos?.Select(p => new Photo
-                    {
-                        Url = p.Url,
-                        DateAjout = DateTime.Now
-                    }).ToList();
+                    annonce.Photos = photosToSave;
                 }
                 else
                 {
@@ -95,11 +161,7 @@ namespace ColocationAppBackend.BL
                         Statut = AnnonceStatus.Brouillon,
                         NbVues = 0,
                         DateModification = DateTime.Now,
-                        Photos = req.Photos?.Select(p => new Photo
-                        {
-                            Url = p.Url,
-                            DateAjout = DateTime.Now
-                        }).ToList()
+                        Photos = photosToSave
                     };
                     logement.Annonce = annonce;
                 }
@@ -134,11 +196,7 @@ namespace ColocationAppBackend.BL
                     Statut = req.Status != default ? req.Status : AnnonceStatus.Brouillon,
                     NbVues = 0,
                     DateModification = DateTime.Now,
-                    Photos = req.Photos?.Select(p => new Photo
-                    {
-                        Url = p.Url,
-                        DateAjout = DateTime.Now
-                    }).ToList()
+                    Photos = photosToSave
                 };
 
                 if (logementExistant != null)
@@ -191,24 +249,27 @@ namespace ColocationAppBackend.BL
         }
         public async Task<IEnumerable<AnnonceSummaryDto>> GetAnnoncesByProprietaireIdAsync(int proprietaireId)
         {
-            return await _context.Annonces
-            .Include(a => a.Logement)
-            .Include(a => a.Photos)
-            .Where(a => a.Logement.ProprietaireId == proprietaireId)
-            .Select(a => new AnnonceSummaryDto
-            {
-                Id = a.Id,
-                Title = a.Titre,
-                Location = $"{a.Logement.Ville}",
-                PublishDate = "Publié le " + a.DateModification.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR")),
-                Price = $"{a.Prix} MAD/mois",
-                Views = a.NbVues,
-                Status = a.Statut.ToString().ToLower(),
-                ImageUrl = a.Photos.Select(p => p.Url).FirstOrDefault() ?? "https://wiratthungsong.com/wts/assets/img/default.png"
-            })
-            .ToListAsync();
-        }
+            string? baseUrl = _configuration["BaseUrl"];
 
+            return await _context.Annonces
+                .Include(a => a.Logement)
+                .Include(a => a.Photos)
+                .Where(a => a.Logement.ProprietaireId == proprietaireId)
+                .Select(a => new AnnonceSummaryDto
+                {
+                    Id = a.Id,
+                    Title = a.Titre,
+                    Location = $"{a.Logement.Ville}",
+                    PublishDate = "Publié le " + a.DateModification.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR")),
+                    Price = $"{a.Prix} MAD/mois",
+                    Views = a.NbVues,
+                    Status = a.Statut.ToString().ToLower(),
+                    ImageUrl = a.Photos.Any()
+                    ? $"{baseUrl}{a.Photos.First().Url}"
+                    : "https://wiratthungsong.com/wts/assets/img/default.png"
+                })
+                .ToListAsync();
+        }
         public async Task<bool> SupprimerLogementAsync(int logementId, int proprietaireId)
         {
             // Vérifie que le logement existe et appartient au propriétaire
