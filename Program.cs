@@ -53,7 +53,8 @@ namespace ColocationAppBackend
             //stats dashbord student 
             builder.Services.AddScoped<DashboardStudentService>();
             builder.Services.AddScoped<GestionUtilisateurs>();
-
+            builder.Services.AddScoped<GestionProprietes>();
+            builder.Services.AddScoped<GestionSignalements>();
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>

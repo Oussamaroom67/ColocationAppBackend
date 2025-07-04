@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ColocationAppBackend.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ColocationAppBackend.Models
@@ -50,6 +51,7 @@ namespace ColocationAppBackend.Models
         public bool ChargesIncluses { get; set; }
 
         public bool ParkingDisponible { get; set; }
+        public LogementStatus status { get; set; } =  LogementStatus.EnAttente;
         //type de logement
         public string Type { get; set; }
 
