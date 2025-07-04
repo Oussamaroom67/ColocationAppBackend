@@ -27,7 +27,7 @@ namespace ColocationAppBackend.Models
         public int? ResoluParId { get; set; }
         public Utilisateur ResoluPar { get; set; }
 
-        public DateTime? DateResolution { get; set; }
+        public DateTime DateResolution { get; set; } = DateTime.UtcNow;
         public DateTime DateModification { get; set; } = DateTime.UtcNow;
     }
 }
