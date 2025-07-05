@@ -52,9 +52,12 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<SignalementService>();
             //stats dashbord student 
             builder.Services.AddScoped<DashboardStudentService>();
+            //stats Admin Panel
             builder.Services.AddScoped<GestionUtilisateurs>();
             builder.Services.AddScoped<GestionProprietes>();
             builder.Services.AddScoped<GestionSignalements>();
+            //stats Home
+            builder.Services.AddScoped<HomeService>();
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>

@@ -2,9 +2,9 @@
 {
     public class HomeStatisticDTO
     {
-        private int totalStudents {  get; set; }
-        private int totalProperties { get; set; }
-        private int totalUniversities { get; set; }
-        private int roomateMatches { get; set; }
+        public  int totalStudents {  get; set; }
+        public  int totalProperties { get; set; }
+        public  int totalUniversities { get; set; }
+        public  int roomateMatches { get; set; }
     }
 }

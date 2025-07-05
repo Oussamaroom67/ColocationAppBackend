@@ -11,6 +11,7 @@ namespace ColocationAppBackend.DTOs.Responses
         public UtilisateurStatus Statut { get; set; }
         public bool EstVerifie { get; set; }
         public string DateInscription { get; set; }
+        public string avatarUrl { get; set; }
 
     }
 }

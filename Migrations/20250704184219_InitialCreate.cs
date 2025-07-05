@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ColocationAppBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreat : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -127,6 +127,7 @@ namespace ColocationAppBackend.Migrations
                     InternetInclus = table.Column<bool>(type: "bit", nullable: false),
                     ChargesIncluses = table.Column<bool>(type: "bit", nullable: false),
                     ParkingDisponible = table.Column<bool>(type: "bit", nullable: false),
+                    status = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProprietaireId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -359,7 +360,7 @@ namespace ColocationAppBackend.Migrations
                     Statut = table.Column<int>(type: "int", nullable: false),
                     NotesAdmin = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ResoluParId = table.Column<int>(type: "int", nullable: true),
-                    DateResolution = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateResolution = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

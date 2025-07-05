@@ -25,7 +25,8 @@ namespace ColocationAppBackend.BL
                     Type = u is Etudiant ? "Etudiant" : u is Proprietaire ? "Proprietaire" : "Administrateur",
                     Statut = u.Status,
                     EstVerifie = u.EstVerifie,
-                    DateInscription = u.DateInscription.ToString("yyyy-MM-dd")
+                    DateInscription = u.DateInscription.ToString("yyyy-MM-dd"),
+                    avatarUrl = u.AvatarUrl != null ? u.AvatarUrl : ""
                 })
                 .ToListAsync();
         }
