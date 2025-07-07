@@ -31,6 +31,7 @@ namespace ColocationAppBackend.BL
                 .Include(a=>a.Logement)
                 .Select(a => new FeaturedPropDto
             {
+                Id = a.Id,
                 Image = a.Photos.FirstOrDefault().Url,
                 Titre = a.Titre,
                 Adresse = a.Logement.Adresse,
