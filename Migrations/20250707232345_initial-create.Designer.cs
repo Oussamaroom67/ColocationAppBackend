@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250706221409_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250707232345_initial-create")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
