@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250704184219_InitialCreate")]
+    [Migration("20250706221409_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
