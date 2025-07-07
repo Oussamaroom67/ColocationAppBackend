@@ -105,7 +105,7 @@ namespace ColocationAppBackend.Data
                 .HasOne(m => m.Expediteur)
                 .WithMany() // Si tu ne veux pas de collection inverse dans Utilisateur
                 .HasForeignKey(m => m.ExpediteurId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Relations pour Signalement
 

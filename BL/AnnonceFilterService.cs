@@ -115,7 +115,7 @@ namespace ColocationAppBackend.BL
                 Ville = a.Logement.Ville,
                 Beds = a.Logement.NbChambres,
                 Baths = a.Logement.NbSallesBain,
-                Photos = a.Photos.Select(p => new PhotoDto { Url = p.Url }).ToList()
+                Photos = a.Photos.Select(p => new PhotoDto { Url = $"{baseUrl}{p.Url}" }).ToList()
             }).ToList();
         }
 
