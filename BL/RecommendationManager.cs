@@ -80,7 +80,10 @@ namespace ColocationAppBackend.BL
                         RecommendationScore = score,
                         IsRecommended = _engine.IsRecommended(score),
                         Preferences = colocation.Preferences ?? new List<string>(),
-                        AvatarUrl = colocation.Etudiant.AvatarUrl
+                        AvatarUrl = colocation.Etudiant.AvatarUrl,
+                        IsFavorite = await _context.Favoris
+                                                   .AsNoTracking()
+                                                   .AnyAsync(f => f.OffreColocationId == colocation.Id)
                     };
                 });
 

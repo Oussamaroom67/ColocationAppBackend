@@ -2,6 +2,8 @@
 using ColocationAppBackend.Enums;
 using ColocationAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
+using ColocationAppBackend.DTOs.Responses;
+using ColocationAppBackend.DTOs.Requests;
 
 
 namespace ColocationAppBackend.BL
@@ -9,10 +11,16 @@ namespace ColocationAppBackend.BL
     public class FavoriService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
+        private string baseUrl;
 
-        public FavoriService(ApplicationDbContext context)
+
+
+        public FavoriService(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
+            this.baseUrl = _configuration["BaseUrl"];
         }
 
         public async Task AjouterFavoriAsync(int etudiantId, int elementId, TypeFavori type)
@@ -51,28 +59,50 @@ namespace ColocationAppBackend.BL
             }
         }
 
-        public async Task<List<Annonce>> ObtenirFavorisAnnoncesAsync(int etudiantId)
+        public async Task<List<FavoriResponse>> ObtenirFavorisAnnoncesAsync(int etudiantId)
         {
-            var annonceIds = await _context.Favoris
+            var favoris = await _context.Favoris
+                .Include(f => f.Annonce)
+                    .ThenInclude(a => a.Logement)
+                .Include(f => f.Annonce)
+                    .ThenInclude(a => a.Photos)
                 .Where(f => f.EtudiantId == etudiantId && f.Type == TypeFavori.Propriete)
-                .Select(f => f.AnnonceId)
+                .Select(f => new FavoriResponse
+                {
+                    Id = f.Annonce.Id,
+                    Titre = f.Annonce.Titre,
+                    Prix = f.Annonce.Prix,
+                    Type = f.Annonce.Logement.Type,
+                    Location = f.Annonce.Logement.Ville + ", " + f.Annonce.Logement.Adresse,
+                    Chambres = f.Annonce.Logement.NbChambres,
+                    Bathrooms = f.Annonce.Logement.NbSallesBain,
+                    State = f.Annonce.Statut.ToString(),
+                    Image = f.Annonce.Photos.Select(p => $"{baseUrl}{p.Url}").FirstOrDefault() ?? string.Empty
+
+                })
                 .ToListAsync();
 
-            return await _context.Annonces
-                .Where(a => annonceIds.Contains(a.Id))
-                .ToListAsync();
+            return favoris;
         }
 
-        public async Task<List<Colocation>> ObtenirFavorisColocationsAsync(int etudiantId)
+        public async Task<List<FavoriColocationResponse>> ObtenirFavorisColocationsAsync(int etudiantId)
         {
-            var colocIds = await _context.Favoris
+            var favoris = await _context.Favoris
+                .Include(f => f.OffreColocation)
+                    .ThenInclude(c => c.Etudiant)
                 .Where(f => f.EtudiantId == etudiantId && f.Type == TypeFavori.Colocation)
-                .Select(f => f.OffreColocationId)
+                .Select(f => new FavoriColocationResponse
+                {
+                    Id = f.OffreColocation.Id,
+                    Name = f.OffreColocation.Etudiant.Nom + " " + f.OffreColocation.Etudiant.Prenom,
+                    School = f.OffreColocation.Etudiant.Universite,
+                    Budget = f.OffreColocation.Budget,
+                    MoveInDate = f.OffreColocation.DateDebutDisponibilite.ToString("dd/MM/yyyy"),
+                    PreferredZone = f.OffreColocation.Adresse
+                })
                 .ToListAsync();
 
-            return await _context.Colocations
-                .Where(c => colocIds.Contains(c.Id))
-                .ToListAsync();
+            return favoris;
         }
     }
 }

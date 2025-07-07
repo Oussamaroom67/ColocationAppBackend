@@ -15,5 +15,6 @@ namespace ColocationAppBackend.DTOs.Responses
         public bool IsRecommended { get; set; }
         public List<string> Preferences { get; set; }
         public string AvatarUrl { get; set; }
+        public bool IsFavorite { get; set; }
     }
 }
