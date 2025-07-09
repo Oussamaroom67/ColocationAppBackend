@@ -27,9 +27,27 @@ namespace ColocationAppBackend.Controllers
         [Route("DeleteUser")]
         public async Task<IActionResult> DeleteUser([FromQuery] int idUser)
         {
-            var IsDeleted = await _utilisateurService.DeleteUser(idUser);
-            return Ok(IsDeleted);
+            try
+            {
+                var isDeleted = await _utilisateurService.DeleteUser(idUser);
+                if (!isDeleted)
+                    return NotFound("Utilisateur introuvable ou suppression impossible.");
+
+                return Ok("Utilisateur supprimé avec succès.");
+            }
+            catch (Exception ex)
+            {
+                var realMessage = ex.InnerException?.InnerException?.Message ?? ex.InnerException?.Message ?? ex.Message;
+                return BadRequest(new
+                {
+
+                    message = "Erreur lors de la suppression de l'utilisateur.",
+                    details = realMessage,
+                    innerException = ex.InnerException?.Message
+                });
+            }
         }
+        
 
         [HttpPost]
         [Route("SuspendreUser")]

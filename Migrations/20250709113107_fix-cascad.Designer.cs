@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250707222529_fix-cascad")]
+    [Migration("20250709113107_fix-cascad")]
     partial class fixcascad
     {
         /// <inheritdoc />

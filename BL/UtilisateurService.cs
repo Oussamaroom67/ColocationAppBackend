@@ -45,15 +45,48 @@ namespace ColocationAppBackend.BL
                 var user = await _context.Utilisateurs.FirstOrDefaultAsync(r => r.Id == id);
                 if (user == null)
                     return false;
+
+                // Supprimer tous les messages
+                var messages = await _context.Messages.Where(r => r.ExpediteurId == id).ToListAsync();
+                _context.Messages.RemoveRange(messages);
+
+                // Supprimer toutes les conversations où il est utilisateur1 ou utilisateur2
+                var conversations1 = await _context.Conversations.Where(r => r.Utilisateur1Id == id).ToListAsync();
+                var conversations2 = await _context.Conversations.Where(r => r.Utilisateur2Id == id).ToListAsync();
+                _context.Conversations.RemoveRange(conversations1);
+                _context.Conversations.RemoveRange(conversations2);
+
+                // Supprimer tous les signalements liés à cet utilisateur
+                var signalements = await _context.Signalments
+                    .Where(r => r.UtilisateurSignaleId == id || r.SignaleurId == id || r.ResoluParId == id)
+                    .ToListAsync();
+                _context.Signalments.RemoveRange(signalements);
+
+                var colocations = await _context.Colocations.Where(c => c.EtudiantId == id).ToListAsync();
+                foreach (var coloc in colocations)
+                {
+                    var demandes = await _context.DemandesColocation
+                        .Where(d => d.ColocationId == coloc.Id)
+                        .ToListAsync();
+
+                    _context.DemandesColocation.RemoveRange(demandes);
+                }
+
+                // Ensuite supprimer les colocations
+                _context.Colocations.RemoveRange(colocations);
+
+                // Enfin, supprimer l'utilisateur
                 _context.Utilisateurs.Remove(user);
-                _context.SaveChanges();
+
+                await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception("Erreur lors de la suppression : " + ex.Message, ex);
             }
         }
+
         //suspendre user
         public async Task<bool> SuspendreUser(int id, bool suspendre)
         {
