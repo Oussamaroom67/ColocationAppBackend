@@ -59,6 +59,9 @@ namespace ColocationAppBackend
             //stats Home
             builder.Services.AddScoped<HomeService>();
 
+            // demande de location 
+            builder.Services.AddScoped<DemandeLocationService>();
+
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
