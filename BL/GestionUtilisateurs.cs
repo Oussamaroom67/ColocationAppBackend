@@ -15,8 +15,18 @@ namespace ColocationAppBackend.BL
         //get all Users
         public async Task<List<GestionUtilisateurDTO>> GetAllUsers()
         {
-            return await _context.Utilisateurs
-                .AsNoTracking()
+            var etudiants = await _context.Utilisateurs
+            .OfType<Etudiant>()
+            .ToListAsync();
+
+            var proprietaires = await _context.Utilisateurs
+                .OfType<Proprietaire>()
+                .ToListAsync();
+
+            var utilisateurs = etudiants.Cast<Utilisateur>()
+                .Concat(proprietaires)
+                .ToList();
+            return  utilisateurs
                 .Select(u => new GestionUtilisateurDTO
                 {
                     id = u.Id,
@@ -28,7 +38,7 @@ namespace ColocationAppBackend.BL
                     DateInscription = u.DateInscription.ToString("yyyy-MM-dd"),
                     avatarUrl = u.AvatarUrl != null ? u.AvatarUrl : ""
                 })
-                .ToListAsync();
+                .ToList();
         }
 
     }
