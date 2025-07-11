@@ -64,6 +64,9 @@ namespace ColocationAppBackend
             // owner dashboard
             builder.Services.AddScoped<DashboardOwnerService>();
 
+            //edit profil
+            builder.Services.AddScoped<ProfilProprietaireService>();
+
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
