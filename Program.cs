@@ -58,6 +58,7 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<GestionSignalements>();
             //stats Home
             builder.Services.AddScoped<HomeService>();
+            builder.Services.AddScoped<OwnerProfile>();
 
             // demande de location 
             builder.Services.AddScoped<DemandeLocationService>();

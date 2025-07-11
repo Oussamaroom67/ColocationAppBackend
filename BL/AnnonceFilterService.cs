@@ -1,6 +1,7 @@
 ﻿using ColocationAppBackend.Data;
 using ColocationAppBackend.DTOs.Requests;
 using ColocationAppBackend.DTOs.Responses;
+using ColocationAppBackend.Enums;
 using ColocationAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -122,6 +123,7 @@ namespace ColocationAppBackend.BL
         public List<AnnonceResponse> GetAllAnnonces()
         {
             return _context.Annonces
+                .Where(a=>a.Statut == AnnonceStatus.Active)
                 .Include(a => a.Logement)
                 .Include(a => a.Photos)
                 .Select(a => new AnnonceResponse

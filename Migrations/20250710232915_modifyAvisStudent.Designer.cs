@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColocationAppBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:Migrations/20250710115505_InitialCreate.Designer.cs
-    [Migration("20250710115505_InitialCreate")]
-    partial class InitialCreate
-========
-    [Migration("20250710083429_restart")]
-    partial class restart
->>>>>>>> feat/awner-Profile:Migrations/20250710083429_restart.Designer.cs
+    [Migration("20250710232915_modifyAvisStudent")]
+    partial class modifyAvisStudent
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,19 +91,11 @@ namespace ColocationAppBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("ProprietaireId")
                         .HasColumnType("int");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
-
-                    b.Property<string>("avatarUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("comment")
                         .IsRequired()
