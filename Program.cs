@@ -61,6 +61,8 @@ namespace ColocationAppBackend
 
             // demande de location 
             builder.Services.AddScoped<DemandeLocationService>();
+            // owner dashboard
+            builder.Services.AddScoped<DashboardOwnerService>();
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
