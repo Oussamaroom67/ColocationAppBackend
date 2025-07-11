@@ -62,6 +62,12 @@ namespace ColocationAppBackend.BL
                     .ToListAsync();
                 _context.Signalments.RemoveRange(signalements);
 
+                // Supprimer tous les signalements liés à cet utilisateur
+                var avis = await _context.Avis
+                    .Where(r => r.StudentId == id || r.ProprietaireId == id)
+                    .ToListAsync();
+                _context.Avis.RemoveRange(avis);
+
                 var colocations = await _context.Colocations.Where(c => c.EtudiantId == id).ToListAsync();
                 foreach (var coloc in colocations)
                 {

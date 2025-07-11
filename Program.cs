@@ -58,6 +58,7 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<GestionSignalements>();
             //stats Home
             builder.Services.AddScoped<HomeService>();
+            builder.Services.AddScoped<OwnerProfile>();
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>

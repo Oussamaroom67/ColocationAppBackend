@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ColocationAppBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class fixcascad : Migration
+    public partial class restart : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,6 +49,36 @@ namespace ColocationAppBackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Utilisateurs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Avis",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    rating = table.Column<double>(type: "float", nullable: false),
+                    comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    avatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    ProprietaireId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Avis", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Avis_Utilisateurs_ProprietaireId",
+                        column: x => x.ProprietaireId,
+                        principalTable: "Utilisateurs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Avis_Utilisateurs_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Utilisateurs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -398,6 +428,16 @@ namespace ColocationAppBackend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Avis_ProprietaireId",
+                table: "Avis",
+                column: "ProprietaireId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Avis_StudentId",
+                table: "Avis",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Colocations_EtudiantId",
                 table: "Colocations",
                 column: "EtudiantId");
@@ -496,6 +536,9 @@ namespace ColocationAppBackend.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Avis");
+
             migrationBuilder.DropTable(
                 name: "DemandesColocation");
 

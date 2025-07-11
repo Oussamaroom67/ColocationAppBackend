@@ -30,5 +30,7 @@ namespace ColocationAppBackend.Models
         public ICollection<Signalement> SignalementsEnvoyes { get; set; }
         public ICollection<Signalement> SignalementsRecus { get; set; }
         public ICollection<Signalement> SignalementsTraites { get; set; }
+        public ICollection<AvisStudent> AvisRecus { get; set; }
+        public ICollection<AvisStudent> AvisEnvoyee { get; set; }
     }
 }

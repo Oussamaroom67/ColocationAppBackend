@@ -27,6 +27,7 @@ namespace ColocationAppBackend.Data
         public DbSet<ReseauSocial> ReseauxSociaux { get; set; }
         public DbSet<Favori> Favoris { get; set; }
         public DbSet<DemandeLocation> DemandesLocation { get; set; }
+        public DbSet<AvisStudent> Avis {  get; set; }
 
         // Configuration des modèles et des relations entre entités
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -122,7 +123,18 @@ namespace ColocationAppBackend.Data
                 .WithMany(u => u.SignalementsRecus)
                 .HasForeignKey(s => s.UtilisateurSignaleId)
                 .OnDelete(DeleteBehavior.Restrict);
-
+            //Relation avis -> Student , suppression restreinte
+            modelBuilder.Entity<AvisStudent>()
+                .HasOne(s => s.Student)
+                .WithMany(u => u.AvisEnvoyee)
+                .HasForeignKey(s => s.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+            //Relation avis -> Proprietaire , suppression restreinte
+            modelBuilder.Entity<AvisStudent>()
+                .HasOne(s => s.Proprietaire)
+                .WithMany(u => u.AvisRecus)
+                .HasForeignKey(s => s.ProprietaireId)
+                .OnDelete(DeleteBehavior.Restrict);
             // Relation Signalement -> ResoluPar (utilisateur ayant traité le signalement), suppression fixée à null
             modelBuilder.Entity<Signalement>()
                 .HasOne(s => s.ResoluPar)

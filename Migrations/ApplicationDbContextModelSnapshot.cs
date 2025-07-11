@@ -80,6 +80,36 @@ namespace ColocationAppBackend.Migrations
                     b.ToTable("Annonces");
                 });
 
+            modelBuilder.Entity("ColocationAppBackend.Models.AvisStudent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProprietaireId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("rating")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProprietaireId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Avis");
+                });
+
             modelBuilder.Entity("ColocationAppBackend.Models.Colocation", b =>
                 {
                     b.Property<int>("Id")
@@ -663,6 +693,25 @@ namespace ColocationAppBackend.Migrations
                     b.Navigation("Logement");
                 });
 
+            modelBuilder.Entity("ColocationAppBackend.Models.AvisStudent", b =>
+                {
+                    b.HasOne("ColocationAppBackend.Models.Utilisateur", "Proprietaire")
+                        .WithMany("AvisRecus")
+                        .HasForeignKey("ProprietaireId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ColocationAppBackend.Models.Utilisateur", "Student")
+                        .WithMany("AvisEnvoyee")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Proprietaire");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("ColocationAppBackend.Models.Colocation", b =>
                 {
                     b.HasOne("ColocationAppBackend.Models.Etudiant", "Etudiant")
@@ -867,6 +916,10 @@ namespace ColocationAppBackend.Migrations
 
             modelBuilder.Entity("ColocationAppBackend.Models.Utilisateur", b =>
                 {
+                    b.Navigation("AvisEnvoyee");
+
+                    b.Navigation("AvisRecus");
+
                     b.Navigation("ConversationsParticipant1");
 
                     b.Navigation("ConversationsParticipant2");
