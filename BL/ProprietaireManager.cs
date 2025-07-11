@@ -272,19 +272,38 @@ namespace ColocationAppBackend.BL
         }
         public async Task<bool> SupprimerLogementAsync(int logementId, int proprietaireId)
         {
-            // Vérifie que le logement existe et appartient au propriétaire
             var logement = await _context.Logements
+                .Include(l => l.Annonce)
                 .FirstOrDefaultAsync(l => l.Id == logementId && l.ProprietaireId == proprietaireId);
 
             if (logement == null)
                 throw new Exception("Logement introuvable ou vous n'avez pas les droits pour le supprimer");
 
-            // Supprime le logement (les cascades s'occupent du reste)
+            if (logement.Annonce != null)
+            {
+                // Supprimer les DemandesLocation liées à l’annonce
+                var demandes = _context.DemandesLocation.Where(d => d.AnnonceId == logement.Annonce.Id);
+                _context.DemandesLocation.RemoveRange(demandes);
+
+                // Supprimer les Favoris liés à l’annonce
+                var favoris = _context.Favoris.Where(f => f.AnnonceId == logement.Annonce.Id);
+                _context.Favoris.RemoveRange(favoris);
+
+                // Supprimer les Photos liées à l’annonce
+                var photos = _context.Photos.Where(p => p.AnnonceId == logement.Annonce.Id);
+                _context.Photos.RemoveRange(photos);
+
+                // Supprimer l’annonce elle-même
+                _context.Annonces.Remove(logement.Annonce);
+            }
+
             _context.Logements.Remove(logement);
             await _context.SaveChangesAsync();
 
             return true;
         }
+
+
 
         public async Task<bool> ChangerStatutAnnonceAsync(int annonceId, AnnonceStatus nouveauStatut, int proprietaireId)
         {
