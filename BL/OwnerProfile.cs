@@ -10,9 +10,14 @@ namespace ColocationAppBackend.BL
     public class OwnerProfile
     {
         private readonly ApplicationDbContext _context;
-        public OwnerProfile(ApplicationDbContext context)
+        private readonly IConfiguration _configuration;
+        private string baseUrl;
+        public OwnerProfile(ApplicationDbContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration=configuration;
+            this.baseUrl = _configuration["BaseUrl"];
+
         }
         //getInfo
         public async Task<OwnerProfileDTO> getInfo(int id)
@@ -36,7 +41,7 @@ namespace ColocationAppBackend.BL
                 Nom = prop.Nom +" "+ prop.Prenom,
                 NmbProprietes = await _context.Logements.CountAsync(p => p.ProprietaireId == id),
                 Adresse = prop.Adresse,
-                AvatarProp = prop.AvatarUrl,
+                AvatarProp = $"{baseUrl}{prop.AvatarUrl}",
                 Note = noteGlobale,
                 pays = prop.Pays,
                 Ville = prop.Ville,

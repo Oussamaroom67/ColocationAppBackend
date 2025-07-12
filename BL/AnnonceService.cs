@@ -1,6 +1,7 @@
 ﻿using ColocationAppBackend.Data;
 using ColocationAppBackend.DTOs.Requests;
 using ColocationAppBackend.DTOs.Responses;
+using ColocationAppBackend.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -70,7 +71,7 @@ public class AnnonceService
                 annonce.Logement.Proprietaire.Email,
                 annonce.Logement.Proprietaire.NoteGlobale,
                 annonce.Logement.Proprietaire.Telephone,
-                annonce.Logement.Proprietaire.AvatarUrl
+                AvatarUrl = $"{this.baseUrl}{annonce.Logement.Proprietaire.AvatarUrl}"
             },
             Photos = annonce.Photos.Select(p => new { p.Id, Url = $"{baseUrl}{p.Url}" })
         };
