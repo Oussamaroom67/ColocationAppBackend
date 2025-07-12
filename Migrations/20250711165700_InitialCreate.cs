@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ColocationAppBackend.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Migrations/20250710115505_InitialCreate.cs
     public partial class InitialCreate : Migration
-========
-    public partial class restart : Migration
->>>>>>>> feat/awner-Profile:Migrations/20250710083429_restart.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,10 +57,8 @@ namespace ColocationAppBackend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     rating = table.Column<double>(type: "float", nullable: false),
                     comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    avatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StudentId = table.Column<int>(type: "int", nullable: false),
                     ProprietaireId = table.Column<int>(type: "int", nullable: false)
                 },

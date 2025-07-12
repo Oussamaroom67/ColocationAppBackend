@@ -21,6 +21,7 @@ public class AuthService : IAuthService
         _context = context;
         _configuration = configuration;
     }
+
     private bool IsUserSuspended(Utilisateur user)
     {
         if (user.LastSuspendedAt == null)
@@ -29,10 +30,53 @@ public class AuthService : IAuthService
         return user.LastSuspendedAt.Value.AddDays(7) > DateTime.UtcNow;
     }
 
+    private async Task<string> SaveImageAsync(string base64Image, string fileName)
+    {
+        try
+        {
+            // Nettoie le base64 (retire data:image/jpeg;base64, etc.)
+            var base64Data = base64Image.Contains(',')
+                ? base64Image.Split(',')[1]
+                : base64Image;
+
+            var imageBytes = Convert.FromBase64String(base64Data);
+
+            // Génère un nom unique
+            var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+
+            // Chemin de sauvegarde - ici dossier profils
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "profiles");
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            var filePath = Path.Combine(uploadPath, uniqueFileName);
+
+            await File.WriteAllBytesAsync(filePath, imageBytes);
+
+            // Retourne URL relative
+            return $"/images/profiles/{uniqueFileName}";
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Erreur lors de la sauvegarde de l'image: {ex.Message}");
+        }
+    }
+
     public async Task<AuthResponseDto> RegisterEtudiantAsync(RegisterEtudiantDto dto)
     {
         if (await _context.Utilisateurs.AnyAsync(u => u.Email == dto.Email))
             throw new Exception("Email déjà utilisé.");
+
+        string avatarUrl = dto.PhotoUrl;
+
+        // Si c'est une image base64, on la sauvegarde
+        if (!string.IsNullOrEmpty(dto.PhotoUrl) && dto.PhotoUrl.StartsWith("data:image/"))
+        {
+            var fileExtension = "jpg"; 
+            var fileName = $"{Guid.NewGuid()}.{fileExtension}";
+            avatarUrl = await SaveImageAsync(dto.PhotoUrl, fileName);
+        }
 
         var etudiant = new Etudiant
         {
@@ -50,14 +94,12 @@ public class AuthService : IAuthService
             EstVerifie = false,
             DernierConnexion = DateTime.UtcNow,
             DateModification = DateTime.UtcNow,
-            AvatarUrl = dto.PhotoUrl,
+            AvatarUrl = avatarUrl,
             Bio = dto.Bio,
-            Telephone = dto.Telephone, 
+            Telephone = dto.Telephone,
             Habitudes = dto.Habitudes.Select(h => h.ToString()).ToList(),
             CentresInteret = dto.CentresInteret.Select(ci => ci.ToString()).ToList(),
             StyleDeVie = dto.StyleDeVie.Select(sd => sd.ToString()).ToList(),
-
-
         };
 
         _context.Etudiants.Add(etudiant);
@@ -70,6 +112,14 @@ public class AuthService : IAuthService
     {
         if (await _context.Utilisateurs.AnyAsync(u => u.Email == dto.Email))
             throw new Exception("Email déjà utilisé.");
+
+        string avatarUrl = dto.PhotoUrl;
+
+        if (!string.IsNullOrEmpty(dto.PhotoUrl) && dto.PhotoUrl.StartsWith("data:image/"))
+        {
+            var fileName = "avatar.jpg";
+            avatarUrl = await SaveImageAsync(dto.PhotoUrl, fileName);
+        }
 
         var proprio = new Proprietaire
         {
@@ -87,7 +137,7 @@ public class AuthService : IAuthService
             DernierConnexion = DateTime.UtcNow,
             DateModification = DateTime.UtcNow,
             Telephone = dto.Telephone,
-            AvatarUrl = dto.PhotoUrl
+            AvatarUrl = avatarUrl
         };
 
         _context.Proprietaires.Add(proprio);
