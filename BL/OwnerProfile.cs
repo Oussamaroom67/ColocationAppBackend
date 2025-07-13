@@ -54,7 +54,7 @@ namespace ColocationAppBackend.BL
                     NomEtudiant = a.Student.Nom + " " + a.Student.Prenom,
                     Rating = a.rating,
                     Comment = a.comment,
-                    AvatarProfile = a.Student.AvatarUrl
+                    AvatarProfile  = $"{baseUrl}{a.Student.AvatarUrl}",
                 }).ToListAsync()
             };
         }
