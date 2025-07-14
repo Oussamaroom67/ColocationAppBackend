@@ -68,6 +68,9 @@ namespace ColocationAppBackend
             //edit profil
             builder.Services.AddScoped<ProfilProprietaireService>();
 
+            //user profil resume
+            builder.Services.AddScoped<UserProfileService>(); 
+
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
