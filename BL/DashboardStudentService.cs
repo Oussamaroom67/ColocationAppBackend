@@ -1,6 +1,7 @@
 ﻿// BL/DashboardStudentService.cs
 using ColocationAppBackend.Data;
 using ColocationAppBackend.DTOs.Responses;
+using ColocationAppBackend.Enums;
 using ColocationAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -81,17 +82,19 @@ namespace ColocationAppBackend.BL
             return messagesRecents;
         }
 
+        // Fix for CS0019: Operator '==' cannot be applied to operands of type 'LogementStatus' and 'string'  
         public async Task<List<PropertyRecentDto>> GetRecentPropertiesAsync(int etudiantId)
         {
-            // Vérifier que l'étudiant existe
+            // Vérifier que l'étudiant existe  
             var etudiant = await _context.Etudiants
                 .FirstOrDefaultAsync(e => e.Id == etudiantId);
             if (etudiant == null)
                 throw new ArgumentException("Étudiant non trouvé");
 
-            // Récupérer les 3 dernières annonces publiées récemment
+            // Récupérer les 3 dernières annonces publiées récemment  
             var propertiesRecentes = await _context.Annonces
                 .Include(a => a.Logement)
+                .Where(a => a.Statut == AnnonceStatus.Active)   
                 .Include(a => a.Photos)
                 .OrderByDescending(a => a.DateModification)
                 .Take(3)

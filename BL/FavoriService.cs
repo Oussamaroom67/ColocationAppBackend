@@ -26,6 +26,7 @@ namespace ColocationAppBackend.BL
         public async Task AjouterFavoriAsync(int etudiantId, int elementId, TypeFavori type)
         {
             var existe = await _context.Favoris
+                .Where(f=>f.Annonce.Statut==AnnonceStatus.Active)
                 .AnyAsync(f => f.EtudiantId == etudiantId &&
                               ((type == TypeFavori.Propriete && f.AnnonceId == elementId) ||
                                (type == TypeFavori.Colocation && f.OffreColocationId == elementId)));
