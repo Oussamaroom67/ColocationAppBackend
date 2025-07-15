@@ -69,7 +69,9 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<ProfilProprietaireService>();
 
             //user profil resume
-            builder.Services.AddScoped<UserProfileService>(); 
+            builder.Services.AddScoped<UserProfileService>();
+            //stats owner for nav
+            builder.Services.AddScoped<OwnerStatsService>();
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>

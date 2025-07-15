@@ -70,7 +70,7 @@ public class AnnonceService
                 annonce.Logement.Proprietaire.Nom,
                 annonce.Logement.Proprietaire.Prenom,
                 annonce.Logement.Proprietaire.Email,
-                annonce.Logement.Proprietaire.NoteGlobale,
+                NoteGlobale=_context.Avis.Where(a=>a.ProprietaireId==annonce.Logement.ProprietaireId).Average(a=>a.rating),
                 annonce.Logement.Proprietaire.Telephone,
                 AvatarUrl = $"{this.baseUrl}{annonce.Logement.Proprietaire.AvatarUrl}"
             },
