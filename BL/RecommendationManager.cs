@@ -26,7 +26,7 @@ namespace ColocationAppBackend.BL
         {
             try
             {
-                // Récupérer l'étudiant connecté avec timeout
+                // Récupérer l'étudiant connecté
                 var currentEtudiant = await _context.Etudiants
                     .AsNoTracking()
                     .FirstOrDefaultAsync(e => e.Id == etudiantId);
@@ -34,7 +34,7 @@ namespace ColocationAppBackend.BL
                 if (currentEtudiant == null)
                     throw new Exception("Étudiant introuvable");
 
-                // Récupérer les colocations avec une requête optimisée
+                // Récupérer les colocations
                 var colocations = await _context.Colocations
                     .AsNoTracking()
                     .Include(c => c.Etudiant)
@@ -56,19 +56,24 @@ namespace ColocationAppBackend.BL
                             c.Etudiant.AvatarUrl
                         }
                     })
-                    .Take(50) 
+                    .Take(50)
+                    .ToListAsync();
+
+                // Précharger tous les favoris de l'étudiant
+                var favorisIds = await _context.Favoris
                     .AsNoTracking()
+                    .Where(f => f.EtudiantId == etudiantId)
+                    .Select(f => f.OffreColocationId)
                     .ToListAsync();
 
                 var results = new List<ColocationRecommendationResponse>();
 
-                // Traitement parallèle pour les calculs de score
-                var tasks = colocations.Select(async colocation =>
+                foreach (var colocation in colocations)
                 {
-                    var score = await Task.Run(() => CalculateMatchingScore(currentEtudiant, colocation));
+                    var score = CalculateMatchingScore(currentEtudiant, colocation);
                     var (ville, quartier) = LocationParser.ExtractVilleEtQuartier(colocation.Adresse);
 
-                    return new ColocationRecommendationResponse
+                    results.Add(new ColocationRecommendationResponse
                     {
                         Id = colocation.Id,
                         Name = $"{colocation.Etudiant.Prenom} {colocation.Etudiant.Nom}",
@@ -81,15 +86,9 @@ namespace ColocationAppBackend.BL
                         IsRecommended = _engine.IsRecommended(score),
                         Preferences = colocation.Preferences ?? new List<string>(),
                         AvatarUrl = colocation.Etudiant.AvatarUrl,
-                        IsFavorite = await _context.Favoris
-                                                   .AsNoTracking()
-                                                   .AnyAsync(f => f.OffreColocationId == colocation.Id)
-                    };
-                });
-
-                // Attendre tous les calculs avec timeout
-                var completedTasks = await Task.WhenAll(tasks);
-                results.AddRange(completedTasks);
+                        IsFavorite = favorisIds.Contains(colocation.Id)
+                    });
+                }
 
                 // Trier : recommandations d'abord (par score décroissant), puis le reste
                 return results
@@ -99,7 +98,6 @@ namespace ColocationAppBackend.BL
             }
             catch (Exception ex)
             {
-                // Log l'erreur et retourner une liste vide plutôt que de faire échouer
                 Console.WriteLine($"Erreur dans GetRecommendedColocationsAsync: {ex.Message}");
                 return new List<ColocationRecommendationResponse>();
             }
