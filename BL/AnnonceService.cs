@@ -32,7 +32,10 @@ public class AnnonceService
 
         annonce.NbVues++;
         _context.SaveChanges();
+        var avis = _context.Avis
+        .Where(a => a.ProprietaireId == annonce.Logement.ProprietaireId);
 
+        double? noteGlobale = avis.Any() ? avis.Average(a => a.rating) : null;
         return new
         {
             annonce.Id,
@@ -70,7 +73,7 @@ public class AnnonceService
                 annonce.Logement.Proprietaire.Nom,
                 annonce.Logement.Proprietaire.Prenom,
                 annonce.Logement.Proprietaire.Email,
-                NoteGlobale=_context.Avis.Where(a=>a.ProprietaireId==annonce.Logement.ProprietaireId).Average(a=>a.rating),
+                NoteGlobale= noteGlobale,
                 annonce.Logement.Proprietaire.Telephone,
                 AvatarUrl = $"{this.baseUrl}{annonce.Logement.Proprietaire.AvatarUrl}"
             },
