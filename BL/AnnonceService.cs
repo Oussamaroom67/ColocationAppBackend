@@ -11,7 +11,7 @@ public class AnnonceService
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
 
-        private string baseUrl;
+    private string baseUrl;
 
     public AnnonceService(ApplicationDbContext context,IConfiguration configuration)
     {
