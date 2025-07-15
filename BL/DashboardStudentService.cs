@@ -10,10 +10,14 @@ namespace ColocationAppBackend.BL
     public class DashboardStudentService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
+        private string baseUrl;
 
-        public DashboardStudentService(ApplicationDbContext context)
+        public DashboardStudentService(ApplicationDbContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
+            this.baseUrl = configuration["baseUrl"];
         }
         // return 
         public async Task<DashboardStudentDto> GetDashboardStatsAsync(int etudiantId)
@@ -82,7 +86,6 @@ namespace ColocationAppBackend.BL
             return messagesRecents;
         }
 
-        // Fix for CS0019: Operator '==' cannot be applied to operands of type 'LogementStatus' and 'string'  
         public async Task<List<PropertyRecentDto>> GetRecentPropertiesAsync(int etudiantId)
         {
             // Vérifier que l'étudiant existe  
@@ -105,7 +108,7 @@ namespace ColocationAppBackend.BL
                     Location = a.Logement.Ville + ", " + a.Logement.Pays,
                     Price = a.Prix.ToString("0"),
                     Type = a.Logement.Type,
-                    Image = a.Photos.FirstOrDefault() != null ? a.Photos.FirstOrDefault().Url : "/src/assets/images/home.jpg"
+                    Image = a.Photos.FirstOrDefault() != null ? $"{ this.baseUrl }{ a.Photos.FirstOrDefault().Url }" : "/src/assets/images/home.jpg"
                 })
                 .ToListAsync();
 
