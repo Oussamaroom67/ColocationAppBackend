@@ -74,6 +74,8 @@ namespace ColocationAppBackend
             builder.Services.AddScoped<OwnerStatsService>();
             //about us
             builder.Services.AddScoped<AboutUsStatsService>();
+            //modif data
+            builder.Services.AddScoped<AnnonceModificationService>();
 
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
