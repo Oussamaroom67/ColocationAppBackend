@@ -8,5 +8,6 @@
         public string Adresse { get; set; } = "";
         public int NbSallesBain { get; set; }
         public int NbChambres { get; set; }
+        public decimal prix {  get; set; }
     }
 }

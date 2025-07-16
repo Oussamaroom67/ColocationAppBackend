@@ -36,7 +36,8 @@ namespace ColocationAppBackend.BL
                 Titre = a.Titre,
                 Adresse = a.Logement.Adresse,
                 NbSallesBain= a.Logement.NbSallesBain,
-                NbChambres = a.Logement.NbChambres
+                NbChambres = a.Logement.NbChambres,
+                prix = a.Prix
             })
             .Take(3)
             .ToListAsync();
