@@ -16,15 +16,19 @@ namespace ColocationAppBackend.BL
         //getAllProprietes
         public async Task<List<GestionProprietesDto>> getAllProprietes()
         {
-            return await _context.Logements.Select(u=> new GestionProprietesDto { 
-                id = u.Id,
-                nom = u.Annonce.Titre,
-                adresse = u.Adresse,
-                nomProprietaire = u.Proprietaire.Nom + " " + u.Proprietaire.Prenom,
-                type = u.Type.ToString(),
-                prix = u.Annonce.Prix,
-                statut = u.status.ToString(),
-                dateAjout = u.Annonce.DateModification.ToString("yyyy-MM-dd"),
+            return await _context.Logements
+                .Include(u => u.Annonce)
+                .Include(u => u.Proprietaire)
+                .Where(u => u.Annonce != null && u.Proprietaire != null)
+                .Select(u=> new GestionProprietesDto { 
+                    id = u.Id,
+                    nom = u.Annonce.Titre,
+                    adresse = u.Adresse,
+                    nomProprietaire = u.Proprietaire.Nom + " " + u.Proprietaire.Prenom,
+                    type = u.Type.ToString(),
+                    prix = u.Annonce.Prix,
+                    statut = u.status.ToString(),
+                    dateAjout = u.Annonce.DateModification.ToString("yyyy-MM-dd"),
             }).ToListAsync();
         }
         //verifiée

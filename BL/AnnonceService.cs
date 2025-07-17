@@ -69,7 +69,7 @@ public class AnnonceService
             },
             Proprietaire = new
             {
-                annonce.Logement.ProprietaireId,
+                annonce.Logement.Proprietaire.Id,
                 annonce.Logement.Proprietaire.Nom,
                 annonce.Logement.Proprietaire.Prenom,
                 annonce.Logement.Proprietaire.Email,

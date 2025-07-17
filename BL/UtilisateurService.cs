@@ -102,6 +102,7 @@ namespace ColocationAppBackend.BL
             if (suspendre)
             {
                 user.LastSuspendedAt = DateTime.UtcNow;
+                user.Status = UtilisateurStatus.Suspendu;
             }
             else
             {
