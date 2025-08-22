@@ -15,7 +15,6 @@
 
 - [🚀 À propos du projet](#-à-propos-du-projet)
 - [🧱 Stack technique](#-stack-technique)
-- [📐 Architecture Backend](#-architecture-backend)
 - [🧩 Description des responsabilités](#-description-des-responsabilités)
 - [👥 Gestion des utilisateurs](#-gestion-des-utilisateurs)
 - [🏘️ Données logements et annonces](#️-données-logements-et-annonces)
@@ -58,11 +57,6 @@ Fonctionnalités principales :
 | Tests API           | Postman                     |
 
 ---
-
-## 📐 Architecture Backend
-
-L’application suit une architecture modulaire inspirée de **Clean Architecture**. Elle respecte les principes **SOLID**, le **découplage** et la **séparation des responsabilités**.
-
 ### 📁 Structure des dossiers
 
 ```plaintext
